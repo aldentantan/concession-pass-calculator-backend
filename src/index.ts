@@ -1,6 +1,8 @@
 import cors from 'cors';
 import express from 'express';
 import pdfParserRouter from './routes/pdfParserRoutes';
+import sql from './db';
+import 'dotenv/config';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,6 +13,16 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// Test DB connection on startup
+(async () => {
+  try {
+    const result = await sql`SELECT NOW()`;
+    console.log('✅ Database connected:', result[0].now);
+  } catch (error) {
+    console.error('❌ Database connection failed:', error);
+  }
+})();
 
 // PDF Parser routes
 app.use('/pdf-parser', pdfParserRouter);
