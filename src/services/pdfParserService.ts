@@ -1,7 +1,10 @@
 import multer from "multer";
 import { PDFParse } from "pdf-parse";
 import fs from "fs";
-import type { Journey, Trip } from "../types";
+import type { Journey } from "../types";
+import { BusTripDistanceService } from "../services/busTripDistanceService";
+
+const busTripDistanceService = new BusTripDistanceService();
 
 export class PdfParserService {
   // Configure multer for file uploads (in-memory storage)
@@ -34,7 +37,7 @@ export class PdfParserService {
     return journeys;
   }
 
-  private parseSimplyGoText(text: string): Journey[] {
+  private async parseSimplyGoText(text: string): Promise<Journey[]> {
     const journeys: Journey[] = [];
 
     if (!text || text.trim().length === 0) {
@@ -107,8 +110,17 @@ export class PdfParserService {
             startLocation: busMatch[3].trim(),
             endLocation: busMatch[4].trim(),
             fare: parseFloat(busMatch[5]),
-            distance: 0, // Distance parsing not implemented yet
+            distance: 0,
           });
+
+          const busTripDistance = await busTripDistanceService.calculateBusTripDistance(
+            busMatch[2],        // Bus service number
+            busMatch[3].trim(), // Source bus stop name
+            busMatch[4].trim()  // Destination bus stop name
+          );
+          currentJourney.trips[currentJourney.trips.length - 1].distance = busTripDistance;
+          currentJourney.busDistance += busTripDistance || 0;
+          currentJourney.totalDistance += busTripDistance || 0;
         }
       }
 
