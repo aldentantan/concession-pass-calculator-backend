@@ -3,8 +3,10 @@ import { PDFParse } from "pdf-parse";
 import fs from "fs";
 import type { Journey } from "../types";
 import { BusTripDistanceService } from "../services/busTripDistanceService";
+import { MrtDistanceService } from "../services/mrtTripDistanceService";
 
 const busTripDistanceService = new BusTripDistanceService();
+const mrtTripDistanceService = new MrtDistanceService();
 
 export class PdfParserService {
   // Configure multer for file uploads (in-memory storage)
@@ -35,6 +37,18 @@ export class PdfParserService {
     });
 
     return journeys;
+  }
+
+  /**
+   * Removes MRT line codes (e.g. DTL, NEL, CCL) from the end of station names for interchanges
+   *
+   * @param stationName String of MRT station name
+   * @returns String of cleaned station name, without the MRT line at the end for MRT interchanges
+   */
+  private cleanStationName(stationName: string): string {
+    // Remove common MRT line codes at the end
+    // Pattern: station name followed by space and 2-4 letter line code
+    return stationName.replace(/\s+(NEL|NSL|EWL|CCL|DTL|TEL|NSEW)$/i, '').trim();
   }
 
   private async parseSimplyGoText(text: string): Promise<Journey[]> {
@@ -129,14 +143,26 @@ export class PdfParserService {
       if (mrtMatch) {
         const currentJourney = journeys[journeys.length - 1];
         if (currentJourney) {
+          const cleanedStartStation = this.cleanStationName(mrtMatch[2].trim());
+          const cleanedEndStation = this.cleanStationName(mrtMatch[3].trim());
+
           currentJourney.trips.push({
             time: mrtMatch[1],
             type: "mrt",
-            startLocation: mrtMatch[2].trim(),
-            endLocation: mrtMatch[3].trim(),
+            startLocation: cleanedStartStation,
+            endLocation: cleanedEndStation,
             fare: parseFloat(mrtMatch[4]),
             distance: 0, // Distance parsing not implemented yet
           });
+
+          const mrtTripDistance = await mrtTripDistanceService.getDistanceKm(
+            cleanedStartStation, // Start station name
+            cleanedEndStation  // End station name
+          );
+          currentJourney.trips[currentJourney.trips.length - 1].distance = mrtTripDistance || 0;
+          currentJourney.mrtDistance += mrtTripDistance || 0;
+          currentJourney.totalDistance += mrtTripDistance || 0;
+          console.log(`MRT trip from ${cleanedStartStation} to ${cleanedEndStation} is ${mrtTripDistance} km`);
         }
       }
 
