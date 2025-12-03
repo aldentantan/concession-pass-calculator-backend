@@ -72,6 +72,7 @@ SELECT add_bidirectional_edge('Boon Keng', 'Farrer Park', 1.2);
 SELECT add_bidirectional_edge('Farrer Park', 'Little India', 0.8);
 SELECT add_bidirectional_edge('Little India', 'Dhoby Ghaut', 1.0);
 SELECT add_bidirectional_edge('Dhoby Ghaut', 'Clarke Quay', 1.4);
+SELECT add_bidirectional_edge('Clarke Quay', 'Chinatown', 0.6);
 SELECT add_bidirectional_edge('Chinatown', 'Outram Park', 0.7);
 SELECT add_bidirectional_edge('Outram Park', 'HarbourFront', 2.6);
 
