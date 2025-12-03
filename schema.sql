@@ -57,18 +57,18 @@ CREATE INDEX idx_mrt_stations_name ON mrt_stations (LOWER(station_name));
 CREATE INDEX idx_mrt_stations_code ON mrt_stations (station_code);
 
 -- Adjacent list of edges between MRT stations weighted graph
-CREATE TABLE IF NOT EXISTS mrt_connections (
-    id SERIAL PRIMARY KEY,
-    from_station TEXT NOT NULL REFERENCES mrt_stations(station_name),
-    to_station TEXT NOT NULL REFERENCES mrt_stations(station_name),
-    distance_km DECIMAL(10, 2) NOT NULL, -- Distance between adjacent stations
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE (from_station, to_station),
-    CHECK (from_station != to_station)   -- Prevent self-loops
+CREATE TABLE mrt_edges (
+  id SERIAL PRIMARY KEY,
+  from_station_id INT NOT NULL REFERENCES mrt_stations(id) ON DELETE CASCADE,
+  to_station_id INT NOT NULL REFERENCES mrt_stations(id) ON DELETE CASCADE,
+  distance_km DECIMAL(10, 1) NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (from_station_id, to_station_id),
+  CHECK (from_station_id != to_station_id)
 );
 
-CREATE INDEX idx_mrt_connections_from ON mrt_connections (from_station);
-CREATE INDEX idx_mrt_connections_to ON mrt_connections (to_station);
+CREATE INDEX idx_mrt_edges_from ON mrt_edges (from_station_id);
+CREATE INDEX idx_mrt_edges_to ON mrt_edges (to_station_id);
 
 CREATE TABLE IF NOT EXISTS mrt_trip_distance_cache (
     id SERIAL PRIMARY KEY,
