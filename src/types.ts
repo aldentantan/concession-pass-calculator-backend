@@ -19,3 +19,14 @@ export interface Journey {
     totalDistance: number;
     totalFare: number;
 }
+
+export interface MrtStation {
+  id: number;
+  name: string;
+}
+
+export interface MrtEdge {
+  fromStationId: number;
+  toStationId: number;
+  distanceKm: number;
+}
