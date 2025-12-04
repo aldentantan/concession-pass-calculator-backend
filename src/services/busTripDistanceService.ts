@@ -31,7 +31,7 @@ export class BusTripDistanceService {
                     const distance = endStop.bus_stop_distance_km - startStop.bus_stop_distance_km;
                     if (distance > 0) {
                         const roundedDistance = Math.round(distance * 100) / 100;
-                        console.log(`Calculated bus trip distance for service ${busService} from ${startStopName} to ${endStopName}: ${roundedDistance} km`);
+                        // console.log(`Calculated bus trip distance for service ${busService} from ${startStopName} to ${endStopName}: ${roundedDistance} km`);
                         return roundedDistance;
                     }
                 }

@@ -40,7 +40,7 @@ export class PdfParserService {
   }
 
   /**
-   * Removes MRT line codes (e.g. DTL, NEL, CCL) from the end of station names for interchanges
+   * Removes MRT line codes (e.g. DTL, NEL, CCL) from the end of station names for interchanges (Serangoon NEL-> Serangoon)
    *
    * @param stationName String of MRT station name
    * @returns String of cleaned station name, without the MRT line at the end for MRT interchanges
@@ -162,7 +162,7 @@ export class PdfParserService {
           currentJourney.trips[currentJourney.trips.length - 1].distance = mrtTripDistance || 0;
           currentJourney.mrtDistance += mrtTripDistance || 0;
           currentJourney.totalDistance += mrtTripDistance || 0;
-          console.log(`MRT trip from ${cleanedStartStation} to ${cleanedEndStation} is ${mrtTripDistance} km`);
+          // console.log(`MRT trip from ${cleanedStartStation} to ${cleanedEndStation} is ${mrtTripDistance} km`);
         }
       }
 
