@@ -80,3 +80,17 @@ CREATE TABLE IF NOT EXISTS mrt_trip_distance_cache (
 );
 
 CREATE INDEX idx_mrt_trip_lookup ON mrt_trip_distance_cache (from_station, to_station);
+
+CREATE TABLE IF NOT EXISTS fare_table (
+    id SERIAL PRIMARY KEY,
+    service_type TEXT NOT NULL CHECK (service_type IN ('basic', 'express')),
+    commuter_type TEXT NOT NULL CHECK (commuter_type IN ('adult', 'student', 'senior/pwd')),
+    min_distance_km DECIMAL(10, 1) NOT NULL,
+    max_distance_km DECIMAL(10, 1) NOT NULL,
+    fare DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    CHECK (min_distance_km < max_distance_km),
+    UNIQUE (service_type, commuter_type, min_distance_km, max_distance_km)
+);
+
+CREATE INDEX idx_fare_lookup ON fare_table (service_type, commuter_type, min_distance_km, max_distance_km);
