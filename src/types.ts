@@ -30,3 +30,11 @@ export interface MrtEdge {
   toStationId: number;
   distanceKm: number;
 }
+
+export interface FareTable {
+  service_type: string;
+  commuter_type: string;
+  min_distance_km: number;
+  max_distance_km: number;
+  fare: number;
+}
