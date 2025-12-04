@@ -36,7 +36,7 @@ export class MrtRepository {
     to_station_id: number
   ): Promise<number | null> {
     const result = await sql<{ distance_km: number }[]>`
-            SELECT distance_km
+            SELECT distance_km::float
             FROM mrt_edges
             WHERE from_station_id = ${from_station_id}
               AND to_station_id = ${to_station_id}
