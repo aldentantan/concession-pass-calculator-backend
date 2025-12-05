@@ -52,7 +52,7 @@ class BusStopFuzzyMatchService {
    */
   private normalizeStopName(name: string): string {
     return name
-      .replace(/\b(board|alight|alighting)\b/gi, '') // Remove common prefixes
+      .replace(/\b(board|alight|alighting|boarding)\b/gi, '') // Remove common prefixes
       .trim();
   }
 }
