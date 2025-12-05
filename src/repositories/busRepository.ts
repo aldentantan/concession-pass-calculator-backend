@@ -1,6 +1,13 @@
 import sql from "../db";
 
 export class BusRepository {
+  async getAllBusStops(): Promise<{ bus_stop_code: string; bus_stop_name: string }[]> {
+    return await sql<{ bus_stop_code: string; bus_stop_name: string }[]>`
+            SELECT bus_stop_code, bus_stop_name
+            FROM lta_bus_stops
+        `;
+  }
+
   /**
    * Retrieves the unique 5-digit code for a given bus stop name.
    * There might be multiple bus stops with the same name so if duplicate names exist, all codes are returned in a list.
