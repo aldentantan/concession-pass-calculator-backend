@@ -44,3 +44,5 @@ export class MrtRepository {
     return result.length > 0 ? Number(result[0].distance_km) : null;
   }
 }
+
+export const mrtRepository = new MrtRepository();

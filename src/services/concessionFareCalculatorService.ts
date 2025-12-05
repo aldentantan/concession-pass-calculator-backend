@@ -1,7 +1,7 @@
 import type { Journey } from '../types';
 import { FareTableRepository } from '../repositories/fareTableRepository';
 
-export class concessionFareCalculatorService {
+class ConcessionFareCalculatorService {
     private fareTableRepository = new FareTableRepository();
 
     async calculateFaresOnConcession(journeys: Journey[]): Promise<any> {
@@ -37,3 +37,5 @@ export class concessionFareCalculatorService {
         }
     }
 }
+
+export const concessionFareCalcService = new ConcessionFareCalculatorService();

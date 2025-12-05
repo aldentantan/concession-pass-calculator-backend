@@ -2,13 +2,10 @@ import multer from "multer";
 import { PDFParse } from "pdf-parse";
 import fs from "fs";
 import type { Journey } from "../types";
-import { BusTripDistanceService } from "../services/busTripDistanceService";
-import { MrtDistanceService } from "../services/mrtTripDistanceService";
+import { busTripDistanceService } from "../services/busTripDistanceService";
+import { mrtTripDistanceService } from "../services/mrtTripDistanceService";;
 
-const busTripDistanceService = new BusTripDistanceService();
-const mrtTripDistanceService = new MrtDistanceService();
-
-export class PdfParserService {
+class PdfParserService {
   // Configure multer for file uploads (in-memory storage)
   upload = multer({ storage: multer.memoryStorage() });
 
@@ -188,3 +185,5 @@ export class PdfParserService {
     return journeys;
   }
 }
+
+export const pdfParserService = new PdfParserService();

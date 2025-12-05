@@ -1,9 +1,8 @@
-import { MrtRepository } from "../repositories/mrtRepository";
+import { mrtRepository } from "../repositories/mrtRepository";
 
 type AdjEdge = { to: number; weight: number };
 
-export class MrtGraphService {
-  private mrtRepository = new MrtRepository();
+class MrtGraphService {
 
   // adjacency list: stationId -> [{to_station, weight}, ...]
   private adjacency: Map<number, AdjEdge[]> = new Map();
@@ -14,8 +13,8 @@ export class MrtGraphService {
     if (this.built) return;
 
     const [stations, edges] = await Promise.all([
-      this.mrtRepository.getAllStations(),
-      this.mrtRepository.getAllEdges(),
+      mrtRepository.getAllStations(),
+      mrtRepository.getAllEdges(),
     ]);
 
     // initialise keys so every stationId has an array
@@ -40,3 +39,5 @@ export class MrtGraphService {
     return this.adjacency;
   }
 }
+
+export const mrtGraphService = new MrtGraphService();

@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
-import { PdfParserService } from '../services/pdfParserService';
+import { pdfParserService } from '../services/pdfParserService';
 
 export class PdfParserController {
-  private pdfParserService = new PdfParserService();
-
   /**
    * POST /pdf-parser
    * Upload and parse SimplyGo PDF
@@ -19,7 +17,7 @@ export class PdfParserController {
       console.log('📄 Received PDF file:', req.file.originalname);
 
       // Call service
-      const journeys = await this.pdfParserService.parsePdf(req.file.buffer);
+      const journeys = await pdfParserService.parsePdf(req.file.buffer);
 
       // Format response
       return res.status(200).json({

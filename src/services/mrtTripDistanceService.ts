@@ -1,15 +1,12 @@
-import { MrtRepository } from "../repositories/mrtRepository";
-import { MrtGraphService } from "./mrtGraphService";
+import { mrtRepository } from "../repositories/mrtRepository";
+import { mrtGraphService } from "./mrtGraphService";
 
-export class MrtDistanceService {
-  private mrtRepository = new MrtRepository();
-  private mrtGraphService = new MrtGraphService();
-
+class MrtTripDistanceService {
   async getDistanceKm(startName: string, endName: string): Promise<number | null> {
     if (startName === endName) return 0;
 
-    const startId = await this.mrtRepository.getStationIdByName(startName);
-    const endId = await this.mrtRepository.getStationIdByName(endName);
+    const startId = await mrtRepository.getStationIdByName(startName);
+    const endId = await mrtRepository.getStationIdByName(endName);
 
     if (!startId || !endId) {
       console.warn("Unknown MRT station(s):", { startName, endName });
@@ -18,7 +15,7 @@ export class MrtDistanceService {
 
     if (startId === endId) return 0;
 
-    const adjacency = await this.mrtGraphService.getAdjacency();
+    const adjacency = await mrtGraphService.getAdjacency();
     return this.dijkstra(adjacency, startId, endId);
   }
 
@@ -68,3 +65,5 @@ export class MrtDistanceService {
     return roundedDistance;
   }
 }
+
+export const mrtTripDistanceService = new MrtTripDistanceService();
