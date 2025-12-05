@@ -48,7 +48,9 @@ export class PdfParserService {
   private cleanStationName(stationName: string): string {
     // Remove common MRT line codes at the end
     // Pattern: station name followed by space and 2-4 letter line code
-    return stationName.replace(/\s+(NEL|NSL|EWL|CCL|DTL|TEL|NSEW)$/i, '').trim();
+    return stationName
+      .replace(/\s+(NEL|NSL|EWL|CCL|DTL|TEL|NSEW)$/i, "")
+      .trim();
   }
 
   private async parseSimplyGoText(text: string): Promise<Journey[]> {
@@ -76,8 +78,10 @@ export class PdfParserService {
     const farePattern = /^\$\s*([\d.]+)$/;
     const busTripPattern =
       /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Bus\s+(\d+[A-Z]*)\s+(.+?)\s+-\s+(.+?)\s+\$\s*([\d.]+)$/i;
+    // const mrtTripPattern =
+    //   /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Train\s+(.+?)\s+-\s+(.+?)\s+\$\s*([\d.]+)$/i;
     const mrtTripPattern =
-      /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Train\s+(.+?)\s+-\s+(.+?)\s+\$\s*([\d.]+)$/i;
+      /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Train\s+(.+?)\s+-\s+(.+?)(?:\s+\$\s*([\d.]+))?$/i;
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
@@ -127,12 +131,14 @@ export class PdfParserService {
             distance: 0,
           });
 
-          const busTripDistance = await busTripDistanceService.calculateBusTripDistance(
-            busMatch[2],        // Bus service number
-            busMatch[3].trim(), // Source bus stop name
-            busMatch[4].trim()  // Destination bus stop name
-          );
-          currentJourney.trips[currentJourney.trips.length - 1].distance = busTripDistance;
+          const busTripDistance =
+            await busTripDistanceService.calculateBusTripDistance(
+              busMatch[2], // Bus service number
+              busMatch[3].trim(), // Source bus stop name
+              busMatch[4].trim() // Destination bus stop name
+            );
+          currentJourney.trips[currentJourney.trips.length - 1].distance =
+            busTripDistance;
           currentJourney.busDistance += busTripDistance || 0;
           currentJourney.totalDistance += busTripDistance || 0;
         }
@@ -151,18 +157,21 @@ export class PdfParserService {
             type: "mrt",
             startLocation: cleanedStartStation,
             endLocation: cleanedEndStation,
-            fare: parseFloat(mrtMatch[4]),
+            fare: parseFloat(mrtMatch[4] || "0"),
             distance: 0, // Distance parsing not implemented yet
           });
 
           const mrtTripDistance = await mrtTripDistanceService.getDistanceKm(
             cleanedStartStation, // Start station name
-            cleanedEndStation  // End station name
+            cleanedEndStation // End station name
           );
-          currentJourney.trips[currentJourney.trips.length - 1].distance = mrtTripDistance || 0;
+          currentJourney.trips[currentJourney.trips.length - 1].distance =
+            mrtTripDistance || 0;
           currentJourney.mrtDistance += mrtTripDistance || 0;
           currentJourney.totalDistance += mrtTripDistance || 0;
-          // console.log(`MRT trip from ${cleanedStartStation} to ${cleanedEndStation} is ${mrtTripDistance} km`);
+          console.log(
+            `MRT trip from ${cleanedStartStation} to ${cleanedEndStation} is ${mrtTripDistance} km`
+          );
         }
       }
 
