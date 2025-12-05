@@ -15,6 +15,9 @@ class BusTripDistanceService {
             // Fuzzy matching
             startBusStopCodes = await busStopFuzzyMatchService.findBusStop(startStopName);
             if (startBusStopCodes) {
+                // Hardcoded fix for Woodlands Checkpoint having the same bus stop names
+                // 46101 is the bus stop to alight to cross to JB, 46109 is the bus stop after coming back from JB to go home
+                if (startBusStopCodes[0] === "46101") startBusStopCodes = ["46109"];
                 console.log(`Fuzzy matched start bus stop: ${startBusStopCodes}`);
             } else {
                 console.log(`Bus stop codes still not found for ${startStopName}`);
