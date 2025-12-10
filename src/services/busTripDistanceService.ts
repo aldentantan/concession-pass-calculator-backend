@@ -18,20 +18,20 @@ class BusTripDistanceService {
                 // Hardcoded fix for Woodlands Checkpoint having the same bus stop names
                 // 46101 is the bus stop to alight to cross to JB, 46109 is the bus stop after coming back from JB to go home
                 if (startBusStopCodes[0] === "46101") startBusStopCodes = ["46109"];
-                console.log(`Fuzzy matched start bus stop: ${startBusStopCodes}`);
+                // console.log(`Fuzzy matched start bus stop: ${startBusStopCodes}`);
             } else {
-                console.log(`Bus stop codes still not found for ${startStopName}`);
+                // console.log(`Bus stop codes still not found for ${startStopName}`);
                 return 0;
             }
         }
 
         if (!endBusStopCodes) {
-            console.log(`Bus stop codes not found for ${endStopName}`);
+            // console.log(`Bus stop codes not found for ${endStopName}`);
             endBusStopCodes = await busStopFuzzyMatchService.findBusStop(endStopName);
             if (endBusStopCodes) {
-                console.log(`Fuzzy matched end bus stop: ${endBusStopCodes}`);
+                // console.log(`Fuzzy matched end bus stop: ${endBusStopCodes}`);
             } else {
-                console.log(`Bus stop codes still not found for ${endStopName}`);
+                // console.log(`Bus stop codes still not found for ${endStopName}`);
                 return 0;
             }
         }
@@ -50,7 +50,7 @@ class BusTripDistanceService {
                     const distance = endStop.bus_stop_distance_km - startStop.bus_stop_distance_km;
                     if (distance > 0) {
                         const roundedDistance = Math.round(distance * 100) / 100;
-                        console.log(`Calculated bus trip distance for service ${busService} from ${startStopName} to ${endStopName}: ${roundedDistance} km`);
+                        // console.log(`Calculated bus trip distance for service ${busService} from ${startStopName} to ${endStopName}: ${roundedDistance} km`);
                         return roundedDistance;
                     }
                 }

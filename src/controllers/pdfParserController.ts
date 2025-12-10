@@ -14,8 +14,6 @@ export class PdfParserController {
         });
       }
 
-      console.log('📄 Received PDF file:', req.file.originalname);
-
       // Call service
       const journeys = await pdfParserService.parsePdf(req.file.buffer);
 

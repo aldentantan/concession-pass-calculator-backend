@@ -32,7 +32,7 @@ class BusStopFuzzyMatchService {
     const normalizedQuery = this.normalizeStopName(pdfName);
 
     const results = this.fuse.search(normalizedQuery, { limit: 3 });
-    console.log(`Fuzzy search results for "${pdfName}":`, results);
+    // console.log(`Fuzzy search results for "${pdfName}":`, results);
 
     if (results.length === 0) {
       console.warn(`No bus stop found for the bus stop name "${pdfName}" from the SimplyGo PDF.`);
@@ -43,7 +43,7 @@ class BusStopFuzzyMatchService {
 
     const match = [bestMatch.item.bus_stop_code];
 
-    console.log(`✅ Matched "${pdfName}" → "${bestMatch.item.bus_stop_name}"`);
+    // console.log(`✅ Matched "${pdfName}" → "${bestMatch.item.bus_stop_name}"`);
     return match;
   }
 

@@ -23,14 +23,11 @@ class MrtGraphService {
     }
 
     for (const e of edges) {
-      console.log(e);
       const arr = this.adjacency.get(e.fromStationId);
       if (arr) {
         arr.push({ to: e.toStationId, weight: e.distanceKm });
       }
     }
-    console.log("MRT graph built with adjacency list:", this.adjacency);
-
     this.built = true;
   }
 

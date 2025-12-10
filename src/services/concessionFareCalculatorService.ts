@@ -20,7 +20,7 @@ class ConcessionFareCalculatorService {
                     journeyDistanceExcludingBus += trip.distance;
                 }
             }
-            console.log(`Journey Distance: ${journey.totalDistance} km, Excluding Bus: ${journeyDistanceExcludingBus} km, Excluding MRT: ${journeyDistanceExcludingMrt} km`);
+            // console.log(`Journey Distance from ${journey.startLocation} to ${journey.endLocation}: ${journey.totalDistance} km, Excluding Bus: ${journeyDistanceExcludingBus} km, Excluding MRT: ${journeyDistanceExcludingMrt} km`);
             if (journeyDistanceExcludingBus !== 0) {
                 journeyFareExcludingBus = await this.fareTableRepository.calculateFareByDistance(journeyDistanceExcludingBus);
             }

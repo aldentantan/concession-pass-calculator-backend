@@ -28,9 +28,6 @@ class PdfParserService {
         console.error("Error writing file asynchronously:", err);
         return;
       }
-      console.log(
-        "SimplyGo PDF successfully written to output.txt (asynchronously)."
-      );
     });
 
     return journeys;
@@ -63,7 +60,6 @@ class PdfParserService {
       .split("\n")
       .map((line) => line.trim())
       .filter((line) => line.length > 0);
-    console.log("Processing", lines.length, "lines from PDF");
 
     const marker = "Date Journey Charges";
     const idx = lines.indexOf(marker);
@@ -166,9 +162,7 @@ class PdfParserService {
             mrtTripDistance || 0;
           currentJourney.mrtDistance += mrtTripDistance || 0;
           currentJourney.totalDistance += mrtTripDistance || 0;
-          console.log(
-            `MRT trip from ${cleanedStartStation} to ${cleanedEndStation} is ${mrtTripDistance} km`
-          );
+          // console.log(`MRT trip from ${cleanedStartStation} to ${cleanedEndStation} is ${mrtTripDistance} km`);
         }
       }
 
