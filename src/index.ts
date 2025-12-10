@@ -7,7 +7,7 @@ import pdfParserRouter from './routes/pdfParserRoutes';
 import concessionFareCalculatorRouter from './routes/concessionFareCalculatorRoutes';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 const corsOptions = {
   origin: ['http://localhost:5173', 'https://concession-pass-calculator.vercel.app']
