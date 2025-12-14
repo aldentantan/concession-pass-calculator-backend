@@ -1,9 +1,24 @@
+import fs from "fs";
 import multer from "multer";
 import { PDFParse } from "pdf-parse";
-import fs from "fs";
-import type { Journey } from "../types";
 import { busTripDistanceService } from "../services/busTripDistanceService";
-import { mrtTripDistanceService } from "../services/mrtTripDistanceService";;
+import { mrtTripDistanceService } from "../services/mrtTripDistanceService";
+import type { Journey } from "../types";
+
+const monthMapping: { [key: string]: string } = {
+  "January": "Jan",
+  "February": "Feb",
+  "March": "Mar",
+  "April": "Apr",
+  "May": "May",
+  "June": "Jun",
+  "July": "Jul",
+  "August": "Aug",
+  "September": "Sep",
+  "October": "Oct",
+  "November": "Nov",
+  "December": "Dec",
+};
 
 class PdfParserService {
   // Configure multer for file uploads (in-memory storage)
@@ -61,18 +76,36 @@ class PdfParserService {
       .map((line) => line.trim())
       .filter((line) => line.length > 0);
 
+    // Extract the month of the statement so that all journeys extracted will belong to only this month
+    const statementMonthPattern = /^(\w+)\s+(\d{4})\s+Transit\s+Statement$/;
+    const statementMonthMatch = lines[0].match(statementMonthPattern);
+    let statementMonth: string = "";
+    let statementYear: string = "";
+
+    for (const line of lines) {
+      const match = line.match(statementMonthPattern);
+      if (match) {
+        statementMonth = monthMapping[match[1]];
+        statementYear = match[2];
+        break;
+      }
+    }
+    console.log("Statement month and year:", { statementMonth, statementYear });
+    if (!statementMonth || !statementYear) {
+      console.warn("Could not determine statement month and year from PDF text");
+    }
+
     const marker = "Date Journey Charges";
     const idx = lines.indexOf(marker);
     lines = idx === -1 ? lines : lines.slice(idx + 1);
 
     // Regex patterns for strings in the SimplyGo PDF
-    const datePattern = /^(\d{1,2}\s+\w{3}\s+\d{4})$/;
+    const datePatternExp = `^(\\d{1,2}\\s+${statementMonth}\\s+\\d{4})$`;
+    const datePattern = new RegExp(datePatternExp);
     const dayPattern = /^\((\w{3})\)$/;
     const farePattern = /^\$\s*([\d.]+)$/;
     const busTripPattern =
       /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Bus\s+(\d+[A-Z]*)\s+(.+?)\s+-\s+(.+?)\s+\$\s*([\d.]+)$/i;
-    // const mrtTripPattern =
-    //   /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Train\s+(.+?)\s+-\s+(.+?)\s+\$\s*([\d.]+)$/i;
     const mrtTripPattern =
       /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Train\s+(.+?)\s+-\s+(.+?)(?:\s+\$\s*([\d.]+))?$/i;
 
@@ -86,6 +119,12 @@ class PdfParserService {
         // Found the start of a journey block
         const dateLine = lines[i - 1];
         const dateMatch = dateLine.match(datePattern);
+        if (!dateMatch) { // Skips journeys not in the specified month of the statement
+          while (i + 1 < lines.length && !lines[i + 1].match(dayPattern)) {
+            i += 1;
+          }
+          continue;
+        }
         const date = dateMatch ? dateMatch[1] : "";
 
         // Get start and end locations of the journey
@@ -162,7 +201,9 @@ class PdfParserService {
             mrtTripDistance || 0;
           currentJourney.mrtDistance += mrtTripDistance || 0;
           currentJourney.totalDistance += mrtTripDistance || 0;
-          // console.log(`MRT trip from ${cleanedStartStation} to ${cleanedEndStation} is ${mrtTripDistance} km`);
+          console.log(
+            `MRT trip from ${cleanedStartStation} to ${cleanedEndStation} is ${mrtTripDistance} km`
+          );
         }
       }
 
@@ -176,7 +217,7 @@ class PdfParserService {
         }
       }
     }
-    return journeys;
+    return journeys.reverse();
   }
 }
 
