@@ -66,7 +66,7 @@ class PdfParserService {
     const journeys: Journey[] = [];
 
     if (!text || text.trim().length === 0) {
-      console.warn("No text extracted from PDF");
+      throw new Error("No text extracted from PDF");
     }
 
     // Obtain all non-empty lines after "Date Journey Charges" marker
@@ -90,14 +90,19 @@ class PdfParserService {
         break;
       }
     }
-    console.log("Statement month and year:", { statementMonth, statementYear });
+
     if (!statementMonth || !statementYear) {
       console.warn("Could not determine statement month and year from PDF text");
     }
 
     const marker = "Date Journey Charges";
     const idx = lines.indexOf(marker);
-    lines = idx === -1 ? lines : lines.slice(idx + 1);
+
+    if (idx === -1) {
+      throw new Error( "No public transport journeys found. Did you upload a SimplyGo PDF?")
+    }
+
+    lines = lines.slice(idx + 1);
 
     // Regex patterns for strings in the SimplyGo PDF
     const datePatternExp = `^(\\d{1,2}\\s+${statementMonth}\\s+\\d{4})$`;
