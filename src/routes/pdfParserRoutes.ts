@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import { PdfParserController } from '../controllers/pdfParserController';
+import { authenticateToken } from '../middleware/authenticateToken';
 
 const router = express.Router();
 const pdfParserController = new PdfParserController();
@@ -13,6 +14,7 @@ const upload = multer({
 
 // POST upload SimplyGo PDF to parse and extract journeys and fare details
 router.post('/',
+  authenticateToken,
   upload.single('pdf'),
   (req, res) => pdfParserController.uploadPdf(req, res)
 );
