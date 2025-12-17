@@ -78,7 +78,6 @@ class PdfParserService {
 
     // Extract the month of the statement so that all journeys extracted will belong to only this month
     const statementMonthPattern = /^(\w+)\s+(\d{4})\s+Transit\s+Statement$/;
-    const statementMonthMatch = lines[0].match(statementMonthPattern);
     let statementMonth: string = "";
     let statementYear: string = "";
 
