@@ -7,31 +7,36 @@ class ConcessionFareCalculatorService {
     async calculateFaresOnConcession(journeys: Journey[]): Promise<any> {
         let totalFareExcludingBus = 0
         let totalFareExcludingMrt = 0
+        let totalFare = 0;
 
         for (const journey of journeys) {
             let journeyDistanceExcludingBus = 0
             let journeyDistanceExcludingMrt = 0
+            let totalJourneyDistance = 0;
             let journeyFareExcludingBus = 0, journeyFareExcludingMrt = 0;
             for (const trip of journey.trips) {
                 if (trip.type === 'bus') {
                     journeyDistanceExcludingMrt += trip.distance;
                 }
-                if (trip.type === 'mrt') {
+                else if (trip.type === 'mrt') {
                     journeyDistanceExcludingBus += trip.distance;
                 }
+                totalJourneyDistance += trip.distance;
             }
-            // console.log(`Journey Distance from ${journey.startLocation} to ${journey.endLocation}: ${journey.totalDistance} km, Excluding Bus: ${journeyDistanceExcludingBus} km, Excluding MRT: ${journeyDistanceExcludingMrt} km`);
             if (journeyDistanceExcludingBus !== 0) {
                 journeyFareExcludingBus = await this.fareTableRepository.calculateFareByDistance(journeyDistanceExcludingBus);
             }
             if (journeyDistanceExcludingMrt !== 0) {
                 journeyFareExcludingMrt = await this.fareTableRepository.calculateFareByDistance(journeyDistanceExcludingMrt);
             }
+            const totalJourneyFare = await this.fareTableRepository.calculateFareByDistance(totalJourneyDistance);
             totalFareExcludingBus += Number(journeyFareExcludingBus);
             totalFareExcludingMrt += Number(journeyFareExcludingMrt);
+            totalFare += Number(totalJourneyFare);
         }
 
         return {
+            totalFare,
             totalFareExcludingBus,
             totalFareExcludingMrt
         }
