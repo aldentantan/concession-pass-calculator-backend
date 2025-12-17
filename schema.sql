@@ -6,9 +6,13 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS statements (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    raw_pdf_url TEXT NOT NULL,
-    processed_json JSONB,
+    user_id UUID NOT NULL,
+    filepath TEXT NOT NULL,
+    filename TEXT NOT NULL,
+    journeys_json JSONB,
+    total_fare DECIMAL(10, 2),
+    journey_count INT,
+    statement_month TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
