@@ -3,8 +3,7 @@ import express from 'express';
 import sql from './db';
 import 'dotenv/config';
 
-import pdfParserRouter from './routes/pdfParserRoutes';
-import concessionFareCalculatorRouter from './routes/concessionFareCalculatorRoutes';
+import statementsRouter from './routes/statementsRoutes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,11 +25,8 @@ app.use(express.json());
   }
 })();
 
-// PDF Parser routes
-app.use('/pdf-parser', pdfParserRouter);
-
-// Concession Fare Calculator routes
-app.use('/concession-fare-calculator', concessionFareCalculatorRouter);
+// Main entry point for uploading PDF
+app.use('/statements', statementsRouter)
 
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
