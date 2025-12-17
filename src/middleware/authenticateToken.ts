@@ -26,9 +26,8 @@ export const authenticateToken = async (
       });
     }
 
-    // Get Supabase JWT secret from environment
+    // Get Supabase JWT secret from .env
     const jwtSecret = process.env.SUPABASE_JWT_SECRET;
-    console.log('JWT Secret:', jwtSecret, 'Token:', token);
 
     if (!jwtSecret) {
       console.error('❌ SUPABASE_JWT_SECRET not configured');
@@ -38,20 +37,8 @@ export const authenticateToken = async (
       });
     }
 
-    const decoded_token = jwt.decode(token);
-    console.log('Decoded Token:', decoded_token);
-
     // Verify and decode the JWT token
     const decoded = jwt.verify(token, jwtSecret) as any;
-
-    // Attach user info to request object
-    // req.user = {
-    //   sub: decoded.sub,  // User ID
-    //   email: decoded.email,
-    //   role: decoded.role,
-    //   aud: decoded.aud,
-    //   exp: decoded.exp,
-    // };
 
     // Token is valid, proceed to next middleware/route
     next();
