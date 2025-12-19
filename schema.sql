@@ -7,8 +7,9 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS statements (
     id SERIAL PRIMARY KEY,
     user_id UUID NOT NULL,
-    filepath TEXT NOT NULL,
-    filename TEXT NOT NULL,
+    file_path TEXT NOT NULL,
+    file_name TEXT NOT NULL,
+    file_hash TEXT UNIQUE NOT NULL,
     journeys_json JSONB,
     total_fare DECIMAL(10, 2),
     journey_count INT,
