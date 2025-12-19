@@ -32,7 +32,6 @@ export class StatementsRepository {
   }
 
   async deleteStatement(id: string) {
-    console.log("ID:", id);
     return await sql`DELETE FROM statements WHERE id = ${id}`;
   }
 
@@ -47,6 +46,16 @@ export class StatementsRepository {
     }
 
     return jsonParsedJourneys;
+  }
+
+  async getStatementFilePathById(statementId: string): Promise<string> {
+    const result = await sql<
+      { file_path: string }[]
+    >`SELECT file_path FROM statements WHERE id = ${statementId}`;
+    if (result.length === 0) {
+      throw new Error("Statement not found");
+    }
+    return result[0].file_path;
   }
 }
 

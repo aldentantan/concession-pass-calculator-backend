@@ -16,6 +16,11 @@ router.get("/:id/trip-summary", authenticateToken, (req, res) => {
 }
 );
 
+// GET /:id/create-signed-link - Creates a signed link to view the statement PDF in browser
+router.get("/:id/create-signed-link", authenticateToken, (req, res) =>
+  statementController.createSignedLink(req, res)
+);
+
 // POST /process - Processes uploaded SimplyGo PDF statement
 router.post("/process", authenticateToken, (req, res) =>
   statementController.processStatement(req, res)

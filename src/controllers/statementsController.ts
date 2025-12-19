@@ -158,6 +158,29 @@ export class StatementController {
       });
     }
   }
+
+  async createSignedLink(req: Request, res: Response): Promise<Response> {
+    try {
+      const statementId = req.params.id;
+      if (!statementId) {
+        return res.status(400).json({
+          error: "Invalid request",
+          message: "Missing statement ID parameter",
+        });
+      }
+
+      const signedLink = await statementsService.createSignedLink(statementId);
+      return res.status(200).json({
+        message: "Signed link created successfully",
+        signedLink,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error: "Server error",
+        message: "An unexpected error occurred",
+      });
+    }
+  }
 }
 
 export const statementController = new StatementController();
