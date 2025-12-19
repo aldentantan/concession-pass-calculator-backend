@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS statements (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+CREATE INDEX IF NOT EXISTS idx_statements_user_id ON statements (user_id);
+
 CREATE TABLE IF NOT EXISTS lta_bus_stops (
     id SERIAL PRIMARY KEY,
     bus_stop_code TEXT UNIQUE NOT NULL,     -- "01012"
