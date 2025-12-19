@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 export const authenticateToken = async (
@@ -30,7 +30,7 @@ export const authenticateToken = async (
     const jwtSecret = process.env.SUPABASE_JWT_SECRET;
 
     if (!jwtSecret) {
-      console.error('❌ SUPABASE_JWT_SECRET not configured');
+      console.error('SUPABASE_JWT_SECRET not configured');
       return res.status(500).json({
         error: 'Server configuration error',
         message: 'Authentication is not properly configured',
