@@ -35,7 +35,8 @@ export class StatementController {
    */
   async processStatement(req: Request, res: Response): Promise<Response> {
     try {
-      const { userId, signedUrl, storageFilePath, fileName } = req.body;
+      const { userId, signedUrl, storageFilePath, fileName, fileHash } =
+        req.body;
 
       if (!userId || !signedUrl || !storageFilePath || !fileName) {
         return res.status(400).json({
@@ -57,6 +58,7 @@ export class StatementController {
         userId,
         filePath: storageFilePath,
         fileName,
+        fileHash,
         // statementMonth: journeys.statementMonth,
         // statementYear: parseInt(journeys.statementYear),
         journeyCount: journeys.length,
@@ -72,12 +74,21 @@ export class StatementController {
         journeys: journeys,
         fares,
       });
-    } catch (error) {
+    } catch (error: Error | any) {
       console.error("❌ Error processing statement:", error);
+
+      if (error.message.toLowerCase().includes("duplicate key")) {
+        return res.status(409).json({
+          error:
+            "Duplicate PDF detected. Upload a different PDF or change the file name.",
+          message:
+            "Duplicate PDF detected. Upload a different PDF or change the file name.",
+        });
+      }
 
       if (error instanceof Error) {
         return res.status(400).json({
-          error: "Processing error",
+          error: error.message,
           message: error.message,
         });
       }
@@ -109,6 +120,41 @@ export class StatementController {
       return res.status(500).json({
         error: "Server error",
         message: "An unexpected error occurred",
+      });
+    }
+  }
+
+  async getTripSummary(req: Request, res: Response): Promise<Response> {
+    try {
+      const statementId = req.params.id;
+      if (!statementId) {
+        return res.status(400).json({
+          error: "Invalid request",
+          message: "Missing statement ID parameter",
+        });
+      }
+      const journeys = await statementsService.getJourneysByStatementId(
+        statementId
+      );
+
+      const fares = await concessionFareCalcService.calculateFaresOnConcession(
+        journeys
+      );
+      return res.status(200).json({
+        message: "Trip Summary retrieved successfully",
+        journeys: journeys,
+        fares,
+      });
+    } catch (error: Error | any) {
+      if (error.message.includes("No journeys found")) {
+        return res.status(404).json({
+          error: "No journeys found for the given statement ID",
+          message: "No journeys found for the given statement ID",
+        });
+      }
+      return res.status(500).json({
+        error: "Server error",
+        message: "An unexpected error occurred!!!",
       });
     }
   }

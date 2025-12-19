@@ -9,15 +9,21 @@ router.get("/", authenticateToken, (req, res) =>
   statementController.getAll(req, res)
 );
 
+// GET /:id/trip-summary - Retrieves trip summary for a statement in the DB (uploaded previously)
+router.get("/:id/trip-summary", authenticateToken, (req, res) => {
+  console.log("Fetching trip summary for statement ID:", req.params.id);
+  statementController.getTripSummary(req, res);
+}
+);
+
 // POST /process - Processes uploaded SimplyGo PDF statement
 router.post("/process", authenticateToken, (req, res) =>
   statementController.processStatement(req, res)
 );
 
 // DELETE /:id - Deletes a specific statement by ID
-router.delete("/:id", authenticateToken, (req, res) => {
-  console.log("Received DELETE request for ID:", req.params.id);
-  statementController.deleteStatement(req, res);
-});
+router.delete("/:id", authenticateToken, (req, res) =>
+  statementController.deleteStatement(req, res)
+);
 
 export default router;
