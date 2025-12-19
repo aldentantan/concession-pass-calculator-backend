@@ -1,6 +1,13 @@
 import { statementsRepository } from "../repositories/statementsRepository";
 
 class StatementsService {
+    async getAllStatementsByUserId(userId: string) {
+        if (!userId) {
+            throw new Error('Missing userId to retrieve statements');
+        }
+        return await statementsRepository.getStatementsByUserId(userId);
+    }
+
     async createStatement(values: Record<string, any>) {
         if (!values) {
             throw new Error('Missing values to insert into the statements table');
@@ -16,6 +23,10 @@ class StatementsService {
 
     async updateStatement(id: string, updates: string) {
         return await statementsRepository.updateStatement(id, updates);
+    }
+
+    async deleteStatement(id: string) {
+        return await statementsRepository.deleteStatement(id);
     }
 }
 
