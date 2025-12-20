@@ -29,21 +29,26 @@ class StatementsService {
         "Missing required numeric fields: journeyCount, totalFare"
       );
     }
-    try {
-      return await statementsRepository.insertStatement(values);
-    } catch (error) {
-      throw new Error(
-        `${error instanceof Error ? error.message : String(error)}`
-      );
-    }
+    return await statementsRepository.insertStatement(values);
   }
 
   async updateStatement(id: string, updates: string) {
     return await statementsRepository.updateStatement(id, updates);
   }
 
-  async deleteStatement(id: string) {
-    return await statementsRepository.deleteStatement(id);
+  async deleteStatement(id: string): Promise<void> {
+    if (!id) {
+      throw new Error("Missing statement ID to delete statement");
+    }
+    const filepath = await statementsRepository.getStatementFilePathById(id);
+    const deleteResult = await supabase.storage
+      .from("simplygo-pdf")
+      .remove([filepath]);
+    if (deleteResult.error) {
+      console.log("Error deleting file from storage:", deleteResult.error);
+      throw new Error("Failed to delete SimplyGo statement PDF from storage");
+    }
+    await statementsRepository.deleteStatement(id);
   }
 
   async getJourneysByStatementId(statementId: string): Promise<Journey[]> {
