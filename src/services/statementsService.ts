@@ -1,4 +1,6 @@
 import { statementsRepository } from "../repositories/statementsRepository";
+import { pdfParserService } from "./pdfParserService";
+import { concessionFareCalcService } from "./concessionFareCalculatorService";
 import { supabase } from "../supabase";
 import type { Journey } from "../types";
 
@@ -69,6 +71,21 @@ class StatementsService {
       throw new Error("Failed to create signed URL");
     }
     return signedUrlData.signedUrl;
+  }
+
+  async reanalyseStatement(statementId: string): Promise<{ journeys: Journey[]; fares: any }> {
+    // Get file path of specific statement from statements DB table
+    const filepath = await statementsRepository.getStatementFilePathById(statementId);
+
+    // Download PDF from Supabase storage
+    const { data, error } = await supabase.storage.from("simplygo-pdf").download(filepath);
+    if (error) throw new Error(`Failed to download PDF from storage`);
+
+    // Parse PDF and calculate fares
+    const journeys = await pdfParserService.parsePdf(Buffer.from(await data.arrayBuffer()));
+    const fares = await concessionFareCalcService.calculateFaresOnConcession(journeys);
+
+    return { journeys, fares };
   }
 }
 

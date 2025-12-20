@@ -181,6 +181,47 @@ export class StatementController {
       });
     }
   }
+
+  async reanalyseStatement(req: Request, res: Response): Promise<Response> {
+    try {
+      const statementId = req.params.id;
+      if (!statementId) {
+        return res.status(400).json({
+          error: "Invalid request",
+          message: "Missing statement ID parameter",
+        });
+      }
+
+      const { journeys, fares } = await statementsService.reanalyseStatement(
+        statementId
+      );
+
+      if (!journeys || journeys.length === 0) {
+        return res.status(400).json({
+          error: "No journeys found for the given statement ID",
+          message: "No journeys found for the given statement ID",
+        });
+      }
+
+      return res.status(200).json({
+        message: "Statement reanalysed successfully",
+        journeys,
+        fares,
+      });
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("Failed to download PDF")) {
+        return res.status(400).json({
+          error: "Failed to download PDF from storage",
+          message: "An error occurred while downloading the PDF from storage",
+        });
+      }
+
+      return res.status(500).json({
+        error: "Server error",
+        message: "An unexpected error occurred",
+      });
+    }
+  }
 }
 
 export const statementController = new StatementController();

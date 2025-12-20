@@ -26,6 +26,11 @@ router.post("/process", authenticateToken, (req, res) =>
   statementController.processStatement(req, res)
 );
 
+//POST /:id/reanalyse - Reanalyses an existing statement
+router.post("/:id/reanalyse", authenticateToken, (req, res) =>
+  statementController.reanalyseStatement(req, res)
+);
+
 // DELETE /:id - Deletes a specific statement by ID
 router.delete("/:id", authenticateToken, (req, res) =>
   statementController.deleteStatement(req, res)
