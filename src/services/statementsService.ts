@@ -26,6 +26,11 @@ class StatementsService {
         "Missing required fields: userId, filePath, fileName, or fileHash"
       );
     }
+    if (!values.statementMonth || !values.statementYear) {
+      throw new Error(
+        "Missing required date fields: statementMonth, statementYear"
+      );
+    }
     if (!values.journeyCount || !values.totalFare) {
       throw new Error(
         "Missing required numeric fields: journeyCount, totalFare"
@@ -82,7 +87,7 @@ class StatementsService {
     if (error) throw new Error(`Failed to download PDF from storage`);
 
     // Parse PDF and calculate fares
-    const journeys = await pdfParserService.parsePdf(Buffer.from(await data.arrayBuffer()));
+    const { journeys } = await pdfParserService.parsePdf(Buffer.from(await data.arrayBuffer()));
     const fares = await concessionFareCalcService.calculateFaresOnConcession(journeys);
 
     return { journeys, fares };

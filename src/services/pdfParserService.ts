@@ -6,18 +6,18 @@ import { mrtTripDistanceService } from "../services/mrtTripDistanceService";
 import type { Journey } from "../types";
 
 const monthMapping: { [key: string]: string } = {
-  "January": "Jan",
-  "February": "Feb",
-  "March": "Mar",
-  "April": "Apr",
-  "May": "May",
-  "June": "Jun",
-  "July": "Jul",
-  "August": "Aug",
-  "September": "Sep",
-  "October": "Oct",
-  "November": "Nov",
-  "December": "Dec",
+  January: "Jan",
+  February: "Feb",
+  March: "Mar",
+  April: "Apr",
+  May: "May",
+  June: "Jun",
+  July: "Jul",
+  August: "Aug",
+  September: "Sep",
+  October: "Oct",
+  November: "Nov",
+  December: "Dec",
 };
 
 class PdfParserService {
@@ -29,14 +29,15 @@ class PdfParserService {
    * @param buffer The SimplyGo Transport History PDF file uploaded
    * @returns String output of the parsing
    */
-  async parsePdf(buffer: Buffer): Promise<Journey[]> {
+  async parsePdf(buffer: Buffer): Promise<{ month: string; year: number; journeys: Journey[] }> {
     const parser = new PDFParse({ data: buffer }); // TODO: See if parser can be declared as a class variable and reused for multiple parsing sessions
     const result = await parser.getText();
     await parser.destroy();
 
     const textResult = result.text;
 
-    const journeys = this.parseSimplyGoText(textResult);
+    const { month, year } = this.parseMonthYearFromText(textResult.split("\n"));
+    const journeys = await this.parseSimplyGoText(textResult);
 
     fs.writeFile("output.txt", textResult, "utf8", (err) => {
       if (err) {
@@ -45,7 +46,30 @@ class PdfParserService {
       }
     });
 
-    return journeys;
+    return {
+      month,
+      year,
+      journeys
+    };
+  }
+
+  parseMonthYearFromText(lines: string[]): { month: string; year: number } {
+    if (lines.length === 0) return { month: "", year: -1 };
+    if (lines.length > 10) lines = lines.slice(0, 10);
+
+    const statementMonthPattern = /^(\w+)\s+(\d{4})\s+Transit\s+Statement$/;
+    let month: string = "";
+    let year: number = -1;
+
+    for (const line of lines) {
+      const match = line.match(statementMonthPattern);
+      if (match) {
+        month = monthMapping[match[1]];
+        year = parseInt(match[2]);
+        break;
+      }
+    }
+    return { month, year };
   }
 
   /**
@@ -77,28 +101,21 @@ class PdfParserService {
       .filter((line) => line.length > 0);
 
     // Extract the month of the statement so that all journeys extracted will belong to only this month
-    const statementMonthPattern = /^(\w+)\s+(\d{4})\s+Transit\s+Statement$/;
-    let statementMonth: string = "";
-    let statementYear: string = "";
-
-    for (const line of lines) {
-      const match = line.match(statementMonthPattern);
-      if (match) {
-        statementMonth = monthMapping[match[1]];
-        statementYear = match[2];
-        break;
-      }
-    }
+    const { month: statementMonth, year: statementYear } = this.parseMonthYearFromText(lines);
 
     if (!statementMonth || !statementYear) {
-      console.warn("Could not determine statement month and year from PDF text");
+      console.warn(
+        "Could not determine statement month and year from PDF text"
+      );
     }
 
     const marker = "Date Journey Charges";
     const idx = lines.indexOf(marker);
 
     if (idx === -1) {
-      throw new Error( "No public transport journeys found. Did you upload a SimplyGo PDF?")
+      throw new Error(
+        "No public transport journeys found. Did you upload a SimplyGo PDF?"
+      );
     }
 
     lines = lines.slice(idx + 1);
@@ -123,7 +140,8 @@ class PdfParserService {
         // Found the start of a journey block
         const dateLine = lines[i - 1];
         const dateMatch = dateLine.match(datePattern);
-        if (!dateMatch) { // Skips journeys not in the specified month of the statement
+        if (!dateMatch) {
+          // Skips journeys not in the specified month of the statement
           while (i + 1 < lines.length && !lines[i + 1].match(dayPattern)) {
             i += 1;
           }

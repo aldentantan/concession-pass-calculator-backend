@@ -50,7 +50,7 @@ export class StatementController {
       const arrayBuffer = await response.arrayBuffer();
       const pdfBuffer = Buffer.from(arrayBuffer);
 
-      const journeys = await pdfParserService.parsePdf(pdfBuffer);
+      const { month, year, journeys } = await pdfParserService.parsePdf(pdfBuffer);
       const fares = await concessionFareCalcService.calculateFaresOnConcession(
         journeys
       );
@@ -59,8 +59,8 @@ export class StatementController {
         filePath: storageFilePath,
         fileName,
         fileHash,
-        // statementMonth: journeys.statementMonth,
-        // statementYear: parseInt(journeys.statementYear),
+        statementMonth: month,
+        statementYear: year,
         journeyCount: journeys.length,
         totalFare: fares.totalFare,
         journeys: JSON.stringify(journeys),

@@ -21,8 +21,8 @@ export class StatementsRepository {
 
   async insertStatement(values: Record<string, any>) {
     return await sql<{ cols: string; values: string }[]>`INSERT INTO statements
-    (user_id, file_name, file_path, file_hash, journeys_json, journey_count, total_fare, statement_month)
-    VALUES (${values.userId}, ${values.fileName}, ${values.filePath}, ${values.fileHash}, ${values.journeys}, ${values.journeyCount}, ${values.totalFare}, 'SEP') RETURNING *`;
+    (user_id, file_name, file_path, file_hash, statement_month, statement_year, journeys_json, journey_count, total_fare)
+    VALUES (${values.userId}, ${values.fileName}, ${values.filePath}, ${values.fileHash}, ${values.statementMonth}, ${values.statementYear}, ${values.journeys}, ${values.journeyCount}, ${values.totalFare}) RETURNING *`;
   }
 
   async updateStatement(id: string, updates: string) {
