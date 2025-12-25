@@ -30,6 +30,7 @@ class BusStopFuzzyMatchService {
 
     // Normalize the search query
     const normalizedQuery = this.normalizeStopName(pdfName);
+    // console.log(`Fuzzy searching for bus stop name: "${normalizedQuery}". Original: "${pdfName}"`);
 
     const results = this.fuse.search(normalizedQuery, { limit: 3 });
     // console.log(`Fuzzy search results for "${pdfName}":`, results);
@@ -52,7 +53,10 @@ class BusStopFuzzyMatchService {
    */
   private normalizeStopName(name: string): string {
     return name
-      .replace(/\b(board|alight|alighting|boarding)\b/gi, '') // Remove common prefixes
+      .replace(/\b(boarding & alighting|alighting|boarding|board|alight|berth)\b/gi, '') // Remove common prefixes
+      .replace(/\bInterchange\b/gi, 'Int') // Remove "Interchange"
+      .replace(/\bEO\b/g, '') // Remove "EO" if case-sensitive
+      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
       .trim();
   }
 }
