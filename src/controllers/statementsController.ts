@@ -54,6 +54,7 @@ export class StatementController {
       const fares = await concessionFareCalcService.calculateFaresOnConcession(
         journeys
       );
+      const totalFare = journeys.reduce((sum, journey) => sum + journey.totalFare, 0); // Ensures consistent total fare calculation, in case of discrepancy due to distance calculation
       const statement = await statementsService.createStatement({
         userId,
         filePath: storageFilePath,
@@ -62,7 +63,7 @@ export class StatementController {
         statementMonth: month,
         statementYear: year,
         journeyCount: journeys.length,
-        totalFare: fares.totalFare,
+        totalFare: totalFare,
         journeys: JSON.stringify(journeys),
       });
 
