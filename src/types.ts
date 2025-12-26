@@ -14,6 +14,7 @@ export interface Journey {
     startLocation: string;
     endLocation: string;
     trips: Trip[];
+    tripIssues: TripIssue[];
     mrtDistance: number;
     busDistance: number;
     totalDistance: number;
@@ -37,4 +38,12 @@ export interface FareTable {
   min_distance_km: number;
   max_distance_km: number;
   fare: number;
+}
+
+export interface TripIssue {
+  code: 'BUS_STOP_NOT_FOUND' | 'MRT_STATION_NOT_FOUND';
+  message: string;
+  tripIndex?: number;
+  busService?: string;
+  unknownStopName: string;
 }

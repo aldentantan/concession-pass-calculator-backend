@@ -29,7 +29,9 @@ class PdfParserService {
    * @param buffer The SimplyGo Transport History PDF file uploaded
    * @returns String output of the parsing
    */
-  async parsePdf(buffer: Buffer): Promise<{ month: string; year: number; journeys: Journey[] }> {
+  async parsePdf(
+    buffer: Buffer
+  ): Promise<{ month: string; year: number; journeys: Journey[] }> {
     const parser = new PDFParse({ data: buffer }); // TODO: See if parser can be declared as a class variable and reused for multiple parsing sessions
     const result = await parser.getText();
     await parser.destroy();
@@ -49,7 +51,7 @@ class PdfParserService {
     return {
       month,
       year,
-      journeys
+      journeys,
     };
   }
 
@@ -101,7 +103,8 @@ class PdfParserService {
       .filter((line) => line.length > 0);
 
     // Extract the month of the statement so that all journeys extracted will belong to only this month
-    const { month: statementMonth, year: statementYear } = this.parseMonthYearFromText(lines);
+    const { month: statementMonth, year: statementYear } =
+      this.parseMonthYearFromText(lines);
 
     if (!statementMonth || !statementYear) {
       console.warn(
@@ -161,6 +164,7 @@ class PdfParserService {
           startLocation: startLocation.trim(),
           endLocation: endLocation.trim(),
           trips: [],
+          tripIssues: [],
           mrtDistance: 0,
           busDistance: 0,
           totalDistance: 0,
@@ -185,16 +189,28 @@ class PdfParserService {
             distance: 0,
           });
 
-          const busTripDistance =
+          const { distanceKm: busDistance, issues: busTripIssues } =
             await busTripDistanceService.calculateBusTripDistance(
               busMatch[2], // Bus service number
               busMatch[3].trim(), // Source bus stop name
               busMatch[4].trim() // Destination bus stop name
             );
-          currentJourney.trips[currentJourney.trips.length - 1].distance =
-            busTripDistance;
-          currentJourney.busDistance += busTripDistance || 0;
-          currentJourney.totalDistance += busTripDistance || 0;
+
+          // Add bus trip distance to the current journey
+          if (busDistance !== null) {
+            currentJourney.trips[currentJourney.trips.length - 1].distance =
+              busDistance;
+            currentJourney.busDistance += busDistance;
+            currentJourney.totalDistance += busDistance;
+          }
+
+          // Log bus trip issues in the journey object if any
+          if (busTripIssues.length > 0) {
+            busTripIssues.forEach((issue) => {
+              issue.tripIndex = currentJourney.trips.length - 1;
+            });
+            currentJourney.tripIssues.push(...busTripIssues);
+          }
         }
       }
 
