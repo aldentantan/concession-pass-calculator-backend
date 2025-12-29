@@ -6,7 +6,7 @@ import 'dotenv/config';
 import statementsRouter from './routes/statementsRoutes';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 const corsOptions = {
   origin: ['http://localhost:5173', 'https://concession-pass-calculator.vercel.app']
