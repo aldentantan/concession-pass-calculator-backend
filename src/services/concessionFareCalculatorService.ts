@@ -1,13 +1,18 @@
 import type { Journey } from '../types';
 import { FareTableRepository } from '../repositories/fareTableRepository';
+interface ConcessionFareResult {
+        totalFareWithNewPrices: number;
+        totalFareExcludingBus: number;
+        totalFareExcludingMrt: number;
+    }
 
 class ConcessionFareCalculatorService {
     private fareTableRepository = new FareTableRepository();
 
-    async calculateFaresOnConcession(journeys: Journey[]): Promise<any> {
+    async calculateFaresOnConcession(journeys: Journey[]): Promise<ConcessionFareResult> {
         let totalFareExcludingBus = 0
         let totalFareExcludingMrt = 0
-        let totalFare = 0;
+        let totalFareWithNewPrices = 0;
 
         for (const journey of journeys) {
             let journeyDistanceExcludingBus = 0
@@ -32,11 +37,11 @@ class ConcessionFareCalculatorService {
             const totalJourneyFare = await this.fareTableRepository.calculateFareByDistance(totalJourneyDistance);
             totalFareExcludingBus += Number(journeyFareExcludingBus);
             totalFareExcludingMrt += Number(journeyFareExcludingMrt);
-            totalFare += Number(totalJourneyFare);
+            totalFareWithNewPrices += Number(totalJourneyFare);
         }
 
         return {
-            totalFare,
+            totalFareWithNewPrices,
             totalFareExcludingBus,
             totalFareExcludingMrt
         }
