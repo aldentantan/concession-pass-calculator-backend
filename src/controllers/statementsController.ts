@@ -223,6 +223,76 @@ export class StatementController {
       });
     }
   }
+
+  /**
+   * GET /api/statements/trips/range?userId=xxx&startDate=2024-01-01&endDate=2024-01-30
+   * Retrieves all trips for a user within a specified date range
+   */
+  async getTripsInDateRange(req: Request, res: Response): Promise<Response> {
+    try {
+      const { userId, startDate, endDate } = req.query;
+
+      // Validate required parameters
+      if (!userId || !startDate || !endDate) {
+        return res.status(400).json({
+          error: "Invalid request",
+          message: "Missing required query parameters: userId, startDate, endDate",
+        });
+      }
+
+      // Validate date format (YYYY-MM-DD)
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!dateRegex.test(startDate as string) || !dateRegex.test(endDate as string)) {
+        return res.status(400).json({
+          error: "Invalid date format",
+          message: "Dates must be in YYYY-MM-DD format",
+        });
+      }
+
+      // Validate date range
+      if (startDate > endDate) {
+        return res.status(400).json({
+          error: "Invalid date range",
+          message: "startDate must be before or equal to endDate",
+        });
+      }
+
+      const trips = await statementsService.getTripsInDateRange(
+        userId as string,
+        startDate as string,
+        endDate as string
+      );
+
+      const concessionFares = await statementsService.getConcessionFaresForDateRange(
+        userId as string,
+        startDate as string,
+        endDate as string
+      );
+
+      const totalFare = trips.reduce((sum, trip) => sum + trip.fare, 0);
+
+      return res.status(200).json({
+        message: "Trips retrieved successfully",
+        trips,
+        count: trips.length,
+        totalFare: Math.round(totalFare * 100) / 100,
+        concessionFares: {
+          totalFareExcludingBus: concessionFares.totalFareExcludingBus,
+          totalFareExcludingMrt: concessionFares.totalFareExcludingMrt,
+        },
+        dateRange: {
+          start: startDate,
+          end: endDate,
+        },
+      });
+    } catch (error) {
+      console.error("❌ Error retrieving trips in date range:", error);
+      return res.status(500).json({
+        error: "Server error",
+        message: "An unexpected error occurred",
+      });
+    }
+  }
 }
 
 export const statementController = new StatementController();

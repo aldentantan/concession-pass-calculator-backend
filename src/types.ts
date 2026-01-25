@@ -47,3 +47,16 @@ export interface TripIssue {
   busService?: string;
   unknownStopName: string;
 }
+
+export interface TripWithMetadata {
+  date: string;
+  time: string;
+  mode: 'mrt' | 'bus';
+  busService?: string;
+  startLocation: string;
+  endLocation: string;
+  fare: number;
+  distance: number;
+  statement_id: string;
+  statement_month: string;
+}

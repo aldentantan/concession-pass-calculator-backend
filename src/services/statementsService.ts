@@ -2,7 +2,7 @@ import { statementsRepository } from "../repositories/statementsRepository";
 import { pdfParserService } from "./pdfParserService";
 import { concessionFareCalcService } from "./concessionFareCalculatorService";
 import { supabase } from "../supabase";
-import type { Journey } from "../types";
+import type { Journey, TripWithMetadata } from "../types";
 
 class StatementsService {
   async getAllStatementsByUserId(userId: string) {
@@ -91,6 +91,36 @@ class StatementsService {
     const fares = await concessionFareCalcService.calculateFaresOnConcession(journeys);
 
     return { journeys, fares };
+  }
+
+  async getTripsInDateRange(
+    userId: string,
+    startDate: string,
+    endDate: string
+  ): Promise<TripWithMetadata[]> {
+    if (!userId || !startDate || !endDate) {
+      throw new Error("Missing required parameters: userId, startDate, endDate");
+    }
+    return await statementsRepository.getJourneysByUserIdAndDateRange(
+      userId,
+      startDate,
+      endDate
+    );
+  }
+
+  async getConcessionFaresForDateRange(
+    userId: string,
+    startDate: string,
+    endDate: string
+  ) {
+    if (!userId || !startDate || !endDate) {
+      throw new Error("Missing required parameters: userId, startDate, endDate");
+    }
+    return await statementsRepository.getConcessionFaresByUserIdAndDateRange(
+      userId,
+      startDate,
+      endDate
+    );
   }
 }
 
