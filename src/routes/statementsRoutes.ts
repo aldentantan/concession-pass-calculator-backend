@@ -11,7 +11,7 @@ router.get("/", authenticateToken, (req, res) =>
 
 // GET /trips/range - Retrieves all trips for a user within a date range
 router.get("/trips/range", authenticateToken, (req, res) =>
-  statementController.getTripsInDateRange(req, res)
+  statementController.getDayGroupsInDateRange(req, res)
 );
 
 // GET /:id/trip-summary - Retrieves trip summary for a statement in the DB (uploaded previously)

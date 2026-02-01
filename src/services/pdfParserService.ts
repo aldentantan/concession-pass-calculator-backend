@@ -3,7 +3,7 @@ import multer from "multer";
 import { PDFParse } from "pdf-parse";
 import { busTripDistanceService } from "../services/busTripDistanceService";
 import { mrtTripDistanceService } from "../services/mrtTripDistanceService";
-import type { Journey } from "../types";
+import type { DayGroup, Trip, Journey, TripIssue } from "../types";
 
 const monthMapping: { [key: string]: string } = {
   January: "Jan",
@@ -27,11 +27,11 @@ class PdfParserService {
   /**
    *
    * @param buffer The SimplyGo Transport History PDF file uploaded
-   * @returns String output of the parsing
+   * @returns Parsed data grouped by day
    */
   async parsePdf(
-    buffer: Buffer
-  ): Promise<{ month: string; year: number; journeys: Journey[] }> {
+    buffer: Buffer,
+  ): Promise<{ month: string; year: number; dayGroups: DayGroup[] }> {
     const parser = new PDFParse({ data: buffer }); // TODO: See if parser can be declared as a class variable and reused for multiple parsing sessions
     const result = await parser.getText();
     await parser.destroy();
@@ -39,7 +39,7 @@ class PdfParserService {
     const textResult = result.text;
 
     const { month, year } = this.parseMonthYearFromText(textResult.split("\n"));
-    const journeys = await this.parseSimplyGoText(textResult);
+    const dayGroups = await this.parseSimplyGoText(textResult);
 
     fs.writeFile("output.txt", textResult, "utf8", (err) => {
       if (err) {
@@ -51,7 +51,7 @@ class PdfParserService {
     return {
       month,
       year,
-      journeys,
+      dayGroups,
     };
   }
 
@@ -82,14 +82,14 @@ class PdfParserService {
    */
   private cleanStationName(stationName: string): string {
     // Remove common MRT line codes at the end
-    // Pattern: station name followed by space and 2-4 letter line code
+    // Pattern: station name followed by space and 2-4 letter line code (e.g. "Serangoon CCL")
     return stationName
       .replace(/\s+(NEL|NSL|EWL|CCL|DTL|TEL|NSEW)$/i, "")
       .trim();
   }
 
-  private async parseSimplyGoText(text: string): Promise<Journey[]> {
-    const journeys: Journey[] = [];
+  private async parseSimplyGoText(text: string): Promise<DayGroup[]> {
+    const dayGroupsMap = new Map<string, DayGroup>();
 
     if (!text || text.trim().length === 0) {
       throw new Error("No text extracted from PDF");
@@ -102,13 +102,13 @@ class PdfParserService {
       .map((line) => line.trim())
       .filter((line) => line.length > 0);
 
-    // Extract the month of the statement so that all journeys extracted will belong to only this month
+    // Extract the month of the statement so that all trips extracted will belong to only this month
     const { month: statementMonth, year: statementYear } =
       this.parseMonthYearFromText(lines);
 
     if (!statementMonth || !statementYear) {
       console.warn(
-        "Could not determine statement month and year from PDF text"
+        "Could not determine statement month and year from PDF text",
       );
     }
 
@@ -117,7 +117,7 @@ class PdfParserService {
 
     if (idx === -1) {
       throw new Error(
-        "No public transport journeys found. Did you upload a SimplyGo PDF?"
+        "No public transport journeys found. Did you upload a SimplyGo PDF?",
       );
     }
 
@@ -126,136 +126,209 @@ class PdfParserService {
     // Regex patterns for strings in the SimplyGo PDF
     const datePatternExp = `^(\\d{1,2}\\s+${statementMonth}\\s+\\d{4})$`;
     const datePattern = new RegExp(datePatternExp);
+    const anyDatePattern = /^\d{1,2}\s+\w{3}\s+\d{4}$/; // Matches any date like "30 Sep 2025" or "01 Oct 2025"
     const dayPattern = /^\((\w{3})\)$/;
-    const farePattern = /^\$\s*([\d.]+)$/;
+    const journeyRoutePattern = /^(.+?)\s+-\s+(.+?)$/; // Journey summary line: "START - END"
     const busTripPattern =
       /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Bus\s+(\d+[A-Z]*)\s+(.+?)\s+-\s+(.+?)\s+\$\s*([\d.]+)$/i;
     const mrtTripPattern =
       /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Train\s+(.+?)\s+-\s+(.+?)(?:\s+\$\s*([\d.]+))?$/i;
 
+    let currentDate = "";
+    let currentDay = "";
+    let skipCurrentJourney = false; // Flag to skip journeys from other months
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      const dayMatch = line.match(dayPattern);
 
-      // Use the (DAY) line to identify the start of a journey block and not DATE because there are other dates in the PDF
-      // Pushes a new journey to journeys array when (DAY) line is found
-      if (dayMatch) {
-        // Found the start of a journey block
-        const dateLine = lines[i - 1];
-        const dateMatch = dateLine.match(datePattern);
-        if (!dateMatch) {
-          // Skips journeys not in the specified month of the statement
-          while (i + 1 < lines.length && !lines[i + 1].match(dayPattern)) {
-            i += 1;
-          }
-          continue;
+      // Check if this is any date line (from any month)
+      const anyDateMatch = line.match(anyDatePattern);
+      if (anyDateMatch) {
+        // Check if it's a date from the statement month
+        const statementMonthDateMatch = line.match(datePattern);
+        if (statementMonthDateMatch) {
+          // This is an October date (or whichever month the statement is for)
+          currentDate = statementMonthDateMatch[1];
+          skipCurrentJourney = false;
+        } else {
+          // This is a date from a different month (e.g., Sep in an Oct statement)
+          skipCurrentJourney = true;
         }
-        const date = dateMatch ? dateMatch[1] : "";
+        continue;
+      }
 
-        // Get start and end locations of the journey
-        const journeyLine = lines[i + 1];
-        const journeyParts = journeyLine.split(" - ");
-        const startLocation = journeyParts[0] || "";
-        const endLocation = journeyParts[1] || "";
+      // Skip all lines for journeys from other months
+      if (skipCurrentJourney) {
+        continue;
+      }
 
-        const journey: Journey = {
-          date: date,
-          day: dayMatch[1],
-          startLocation: startLocation.trim(),
-          endLocation: endLocation.trim(),
+
+      // New day line (e.g. (Mon), (Tue)) indicates a new journey in the PDF
+      const dayMatch = line.match(dayPattern);
+      if (dayMatch) {
+        currentDay = dayMatch[1];
+
+        // Initialize day group if it doesn't exist (hasn't encountered a journey from this day yet)
+        if (currentDate && !dayGroupsMap.has(currentDate)) {
+          dayGroupsMap.set(currentDate, {
+            date: currentDate,
+            day: currentDay,
+            journeys: [],
+            tripIssues: [],
+            mrtDistance: 0,
+            busDistance: 0,
+            totalDistance: 0,
+            totalFareExcludingBus: 0,
+            totalFareExcludingMrt: 0,
+            totalFare: 0,
+          });
+        }
+
+        // Add an empty journey to the day group (Every day line in the PDF indicates a new journey)
+        dayGroupsMap.get(currentDate)?.journeys.push({
+          startLocation: "",
+          endLocation: "",
           trips: [],
           tripIssues: [],
-          mrtDistance: 0,
           busDistance: 0,
-          totalDistance: 0,
+          mrtDistance: 0,
+          fareExcludingBus: 0,
+          fareExcludingMrt: 0,
           totalFare: 0,
-        };
-        journeys.push(journey);
-        i += 1; // Advance index to skip the line containing start / end locations
+        });
+        continue;
       }
+
+      // Skip if we don't have a current date (shouldn't happen with valid PDFs)
+      if (!currentDate) {
+        continue;
+      }
+
+      const currentDayGroup = dayGroupsMap.get(currentDate);
+      if (!currentDayGroup) {
+        continue;
+      }
+
+      // Check for journey route start location -> end location line and add to the latest journey
+      // This line appears after the day line and before individual trip details
+      const journeyRouteMatch = line.match(journeyRoutePattern);
+      if (
+        journeyRouteMatch &&
+        currentDayGroup &&
+        currentDayGroup.journeys.length > 0
+      ) {
+        const currentJourney =
+          currentDayGroup.journeys[currentDayGroup.journeys.length - 1];
+
+        // Only set if this is a route line (not a trip detail line with time)
+        // Trip detail lines also have " - " but start with a time
+        if (
+          !line.match(/^\d{1,2}:\d{2}\s+(?:AM|PM)/i) &&
+          !line.startsWith("$")
+        ) {
+          currentJourney.startLocation = journeyRouteMatch[1].trim();
+          currentJourney.endLocation = journeyRouteMatch[2].trim();
+          continue;
+        }
+      }
+
+      const currJourney =
+        currentDayGroup.journeys[currentDayGroup.journeys.length - 1];
 
       // Pattern for Bus trips: "HH:MM AM/PM Bus [NUMBER] [START] - [END] $ [FARE]"
       const busMatch = line.match(busTripPattern);
       if (busMatch) {
-        const currentJourney = journeys[journeys.length - 1];
-        if (currentJourney) {
-          currentJourney.trips.push({
-            time: busMatch[1],
-            type: "bus",
-            busService: busMatch[2],
-            startLocation: busMatch[3].trim(),
-            endLocation: busMatch[4].trim(),
-            fare: parseFloat(busMatch[5]),
-            distance: 0,
+        const trip: Trip = {
+          time: busMatch[1],
+          type: "bus",
+          busService: busMatch[2],
+          startLocation: busMatch[3].trim(),
+          endLocation: busMatch[4].trim(),
+          fare: parseFloat(busMatch[5]),
+          distance: 0,
+        };
+
+        currJourney.trips.push(trip);
+        currJourney.totalFare += trip.fare;
+        currentDayGroup.totalFare += trip.fare;
+
+        const { distanceKm: busDistance, issues: busTripIssues } =
+          await busTripDistanceService.calculateBusTripDistance(
+            busMatch[2], // Bus service number
+            busMatch[3].trim(), // Source bus stop name
+            busMatch[4].trim(), // Destination bus stop name
+          );
+
+        // Add bus trip distance to the current day group
+        if (busDistance) {
+          trip.distance = busDistance;
+          currJourney.busDistance += busDistance;
+          currentDayGroup.busDistance += busDistance;
+          currentDayGroup.totalDistance += busDistance;
+        }
+
+        // Log bus trip issues in the day group object if any
+        if (busTripIssues.length > 0) {
+          busTripIssues.forEach((issue) => {
+            const tripIndexWithIssue = currJourney.trips.length - 1;
+            issue.tripIndex = tripIndexWithIssue;
           });
-
-          const { distanceKm: busDistance, issues: busTripIssues } =
-            await busTripDistanceService.calculateBusTripDistance(
-              busMatch[2], // Bus service number
-              busMatch[3].trim(), // Source bus stop name
-              busMatch[4].trim() // Destination bus stop name
-            );
-
-          // Add bus trip distance to the current journey
-          if (busDistance !== null) {
-            currentJourney.trips[currentJourney.trips.length - 1].distance =
-              busDistance;
-            currentJourney.busDistance += busDistance;
-            currentJourney.totalDistance += busDistance;
-          }
-
-          // Log bus trip issues in the journey object if any
-          if (busTripIssues.length > 0) {
-            busTripIssues.forEach((issue) => {
-              issue.tripIndex = currentJourney.trips.length - 1;
-            });
-            currentJourney.tripIssues.push(...busTripIssues);
-          }
+          currJourney.tripIssues.push(...busTripIssues);
         }
       }
 
       // Pattern for Train/MRT trips: "HH:MM AM/PM Train [START] - [END] $ [FARE]"
       const mrtMatch = line.match(mrtTripPattern);
       if (mrtMatch) {
-        const currentJourney = journeys[journeys.length - 1];
-        if (currentJourney) {
-          const cleanedStartStation = this.cleanStationName(mrtMatch[2].trim());
-          const cleanedEndStation = this.cleanStationName(mrtMatch[3].trim());
+        const cleanedStartStation = this.cleanStationName(mrtMatch[2].trim());
+        const cleanedEndStation = this.cleanStationName(mrtMatch[3].trim());
 
-          currentJourney.trips.push({
-            time: mrtMatch[1],
-            type: "mrt",
-            startLocation: cleanedStartStation,
-            endLocation: cleanedEndStation,
-            fare: parseFloat(mrtMatch[4] || "0"),
-            distance: 0, // Distance parsing not implemented yet
-          });
+        const trip: Trip = {
+          time: mrtMatch[1],
+          type: "mrt",
+          startLocation: cleanedStartStation,
+          endLocation: cleanedEndStation,
+          fare: parseFloat(mrtMatch[4] || "0"),
+          distance: 0,
+        };
 
-          const mrtTripDistance = await mrtTripDistanceService.getDistanceKm(
-            cleanedStartStation, // Start station name
-            cleanedEndStation // End station name
-          );
-          currentJourney.trips[currentJourney.trips.length - 1].distance =
-            mrtTripDistance || 0;
-          currentJourney.mrtDistance += mrtTripDistance || 0;
-          currentJourney.totalDistance += mrtTripDistance || 0;
+        currJourney.trips.push(trip);
+        currJourney.totalFare += trip.fare;
+        currentDayGroup.totalFare += trip.fare;
+
+        const mrtTripDistance = await mrtTripDistanceService.getDistanceKm(
+          cleanedStartStation, // Start station name
+          cleanedEndStation, // End station name
+        );
+
+        if (mrtTripDistance) {
+          trip.distance = mrtTripDistance;
+          currJourney.mrtDistance += mrtTripDistance;
+          currentDayGroup.mrtDistance += mrtTripDistance;
+          currentDayGroup.totalDistance += mrtTripDistance;
           console.log(
-            `MRT trip from ${cleanedStartStation} to ${cleanedEndStation} is ${mrtTripDistance} km`
+            `MRT trip from ${cleanedStartStation} to ${cleanedEndStation} is ${mrtTripDistance} km`,
           );
-        }
-      }
-
-      // Check for the journey fare to match the summation of the trip fares
-      const fareMatch = line.match(farePattern);
-      if (fareMatch) {
-        const fareValue = parseFloat(fareMatch[1]);
-        const currentJourney = journeys[journeys.length - 1];
-        if (currentJourney) {
-          currentJourney.totalFare = fareValue;
         }
       }
     }
-    return journeys.reverse();
+
+    // Convert map to array and sort by date, then sort trips within each day by time
+    const dayGroups = Array.from(dayGroupsMap.values());
+
+    // Sort day groups by date (oldest first)
+    dayGroups.sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateA.getTime() - dateB.getTime();
+    });
+
+    // Sorts the journeys from earliest to latest within each day group
+    dayGroups.forEach((dayGroup) => {
+      dayGroup.journeys.reverse();
+    });
+
+    return dayGroups;
   }
 }
 

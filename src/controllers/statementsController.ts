@@ -50,11 +50,16 @@ export class StatementController {
       const arrayBuffer = await response.arrayBuffer();
       const pdfBuffer = Buffer.from(arrayBuffer);
 
-      const { month, year, journeys } = await pdfParserService.parsePdf(pdfBuffer);
+      const { month, year, dayGroups } = await pdfParserService.parsePdf(pdfBuffer);
       const fares = await concessionFareCalcService.calculateFaresOnConcession(
-        journeys
+        dayGroups
       );
-      const totalFare = journeys.reduce((sum, journey) => sum + journey.totalFare, 0); // Ensures consistent total fare calculation, in case of discrepancy due to distance calculation
+      const totalFare = dayGroups.reduce((sum, day) => sum + day.totalFare, 0); // Ensures consistent total fare calculation, in case of discrepancy due to distance calculation
+      const totalJourneys = dayGroups.reduce(
+        (sum, day) => sum + day.journeys.length,
+        0
+      );
+      console.log(`Parsed PDF for user ${userId}: ${totalJourneys} journeys, Total Fare: $${totalFare.toFixed(2)}`);
       const statement = await statementsService.createStatement({
         userId,
         filePath: storageFilePath,
@@ -62,9 +67,9 @@ export class StatementController {
         fileHash,
         statementMonth: month,
         statementYear: year,
-        journeyCount: journeys.length,
+        journeyCount: totalJourneys,
         totalFare: totalFare,
-        journeys: JSON.stringify(journeys),
+        journeys: JSON.stringify(dayGroups),
       });
 
       console.log("Statement saved successfully");
@@ -72,7 +77,7 @@ export class StatementController {
       return res.status(201).json({
         message: "PDF processed successfully",
         statement,
-        journeys: journeys,
+        dayGroups: dayGroups,
         fares,
       });
     } catch (error: Error | any) {
@@ -134,16 +139,16 @@ export class StatementController {
           message: "Missing statement ID parameter",
         });
       }
-      const journeys = await statementsService.getJourneysByStatementId(
+      const dayGroups = await statementsService.getDayGroupsByStatementId(
         statementId
       );
 
       const fares = await concessionFareCalcService.calculateFaresOnConcession(
-        journeys
+        dayGroups
       );
       return res.status(200).json({
         message: "Trip Summary retrieved successfully",
-        journeys: journeys,
+        dayGroups: dayGroups,
         fares,
       });
     } catch (error: Error | any) {
@@ -153,6 +158,7 @@ export class StatementController {
           message: "No journeys found for the given statement ID",
         });
       }
+      console.log("❌ Error retrieving trip summary:", error);
       return res.status(500).json({
         error: "Server error",
         message: "An unexpected error occurred!!!",
@@ -193,11 +199,11 @@ export class StatementController {
         });
       }
 
-      const { journeys, fares } = await statementsService.reanalyseStatement(
+      const { dayGroups, fares } = await statementsService.reanalyseStatement(
         statementId
       );
 
-      if (!journeys || journeys.length === 0) {
+      if (!dayGroups || dayGroups.length === 0) {
         return res.status(400).json({
           error: "No journeys found for the given statement ID",
           message: "No journeys found for the given statement ID",
@@ -206,7 +212,7 @@ export class StatementController {
 
       return res.status(200).json({
         message: "Statement reanalysed successfully",
-        journeys,
+        dayGroups,
         fares,
       });
     } catch (error) {
@@ -226,9 +232,9 @@ export class StatementController {
 
   /**
    * GET /api/statements/trips/range?userId=xxx&startDate=2024-01-01&endDate=2024-01-30
-   * Retrieves all trips for a user within a specified date range
+   * Retrieves day groups (with trips) for a user within a specified date range
    */
-  async getTripsInDateRange(req: Request, res: Response): Promise<Response> {
+  async getDayGroupsInDateRange(req: Request, res: Response): Promise<Response> {
     try {
       const { userId, startDate, endDate } = req.query;
 
@@ -257,7 +263,7 @@ export class StatementController {
         });
       }
 
-      const trips = await statementsService.getTripsInDateRange(
+      const dayGroups = await statementsService.getDayGroupsInDateRange(
         userId as string,
         startDate as string,
         endDate as string
@@ -269,12 +275,14 @@ export class StatementController {
         endDate as string
       );
 
-      const totalFare = trips.reduce((sum, trip) => sum + trip.fare, 0);
+      // Calculate totals from day groups
+      const totalFare = dayGroups.reduce((sum, dayGroup) => sum + dayGroup.totalFare, 0);
+      const totalTrips = dayGroups.reduce((sum, dayGroup) => sum + dayGroup.journeys.flatMap(journey => journey.trips).length, 0);
 
       return res.status(200).json({
-        message: "Trips retrieved successfully",
-        trips,
-        count: trips.length,
+        message: "Day groups retrieved successfully",
+        dayGroups,
+        count: totalTrips,
         totalFare: Math.round(totalFare * 100) / 100,
         concessionFares: {
           totalFareExcludingBus: concessionFares.totalFareExcludingBus,
@@ -286,7 +294,7 @@ export class StatementController {
         },
       });
     } catch (error) {
-      console.error("❌ Error retrieving trips in date range:", error);
+      console.error("❌ Error retrieving day groups in date range:", error);
       return res.status(500).json({
         error: "Server error",
         message: "An unexpected error occurred",

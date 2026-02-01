@@ -1,5 +1,5 @@
 import sql from "../db";
-import type { Journey, TripWithMetadata } from "../types";
+import type { DayGroup, Trip } from "../types";
 import { concessionFareCalcService } from "../services/concessionFareCalculatorService";
 
 export class StatementsRepository {
@@ -58,17 +58,17 @@ export class StatementsRepository {
     return await sql`DELETE FROM statements WHERE id = ${id}`;
   }
 
-  async getJourneysByStatementId(statementId: string): Promise<Journey[]> {
-    const journeysRow = await sql<
+  async getDayGroupsByStatementId(statementId: string): Promise<DayGroup[]> {
+    const dayGroupsRow = await sql<
       { journeys_json: string }[]
     >`SELECT journeys_json FROM statements WHERE id = ${statementId}`;
 
-    const jsonParsedJourneys = JSON.parse(journeysRow[0].journeys_json);
-    if (journeysRow.length === 0) {
-      throw new Error("No journeys found for the given statement ID");
+    const jsonParsedDayGroups = JSON.parse(dayGroupsRow[0].journeys_json);
+    if (dayGroupsRow.length === 0) {
+      throw new Error("No day groups found for the given statement ID");
     }
 
-    return jsonParsedJourneys;
+    return jsonParsedDayGroups;
   }
 
   async getStatementFilePathById(statementId: string): Promise<string> {
@@ -82,19 +82,19 @@ export class StatementsRepository {
   }
 
   /**
-   * Get all trips/journeys for a user within a specified date range (inclusive)
-   * Queries across all statements for the user and filters journeys by date
+   * Get all day groups for a user within a specified date range (inclusive)
+   * Queries across all statements for the user and filters day groups by date
    * Deduplicates trips that may appear in multiple overlapping statements
    * @param userId - The user ID
    * @param startDate - Start date in YYYY-MM-DD format (inclusive)
    * @param endDate - End date in YYYY-MM-DD format (inclusive)
-   * @returns Array of unique trips with metadata including statement_id
+   * @returns Array of day groups with trips already sorted by time
    */
-  async getJourneysByUserIdAndDateRange(
+  async getDayGroupsByUserIdAndDateRange(
     userId: string,
     startDate: string,
     endDate: string
-  ): Promise<TripWithMetadata[]> {
+  ): Promise<DayGroup[]> {
     // Get all statements for the user
     const statements = await sql<
       {
@@ -105,65 +105,110 @@ export class StatementsRepository {
     >`SELECT id, journeys_json, statement_month FROM statements WHERE user_id = ${userId}`;
 
     console.log(`📊 Found ${statements.length} statements for user ${userId}`);
-    console.log(`📅 Searching for trips between ${startDate} and ${endDate}`);
+    console.log(`📅 Searching for day groups between ${startDate} and ${endDate}`);
 
-    // Use a Map to track unique trips and prevent duplicates
-    const uniqueTripsMap = new Map<string, TripWithMetadata>();
+    // Use a Map to track unique day groups and prevent duplicates
+    const uniqueDayGroupsMap = new Map<string, DayGroup>();
 
-    // Parse each statement's journeys and filter by date range
+    // Parse each statement's day groups and filter by date range
     for (const statement of statements) {
-      const journeys: Journey[] = JSON.parse(statement.journeys_json);
-      console.log(`📄 Statement ${statement.id}: ${journeys.length} journeys, month: ${statement.statement_month}`);
+      const dayGroups: DayGroup[] = JSON.parse(statement.journeys_json);
+      console.log(`📄 Statement ${statement.id}: ${dayGroups.length} day groups, month: ${statement.statement_month}`);
 
-      for (const journey of journeys) {
-        // Parse journey date from "DD MMM YYYY" format to YYYY-MM-DD for comparison
-        // Example: "01 Oct 2025" -> "2025-10-01"
-        const journeyDateFormatted = this.parseJourneyDate(journey.date);
+      for (const dayGroup of dayGroups) {
+        // Parse day group date from "DD MMM YYYY" format to YYYY-MM-DD for comparison
+        const dayDateFormatted = this.parseJourneyDate(dayGroup.date);
 
-        // Check if journey date is within range (inclusive)
-        if (journeyDateFormatted >= startDate && journeyDateFormatted <= endDate) {
-          console.log(`✅ Journey ${journey.date} (${journeyDateFormatted}) is in range`);
-          // Extract each trip from the journey and add metadata
-          for (const trip of journey.trips) {
-            // Create a unique key for deduplication based on trip characteristics
-            // This handles trips that appear in multiple statements (e.g., month boundaries)
-            const tripKey = `${journey.date}|${trip.time}|${trip.type}|${trip.startLocation}|${trip.endLocation}|${trip.fare}|${trip.busService || ''}`;
+        // Check if day group date is within range (inclusive)
+        if (dayDateFormatted >= startDate && dayDateFormatted <= endDate) {
+          console.log(`✅ Day ${dayGroup.date} (${dayDateFormatted}) is in range`);
 
-            // Only add if we haven't seen this exact trip before
-            if (!uniqueTripsMap.has(tripKey)) {
-              uniqueTripsMap.set(tripKey, {
-                date: journey.date,
-                time: trip.time,
-                mode: trip.type,
-                busService: trip.busService,
-                startLocation: trip.startLocation,
-                endLocation: trip.endLocation,
-                fare: trip.fare,
-                distance: trip.distance,
-                statement_id: statement.id,
-                statement_month: statement.statement_month,
-              });
+          // If this day already exists, merge trips (handling month boundaries)
+          if (uniqueDayGroupsMap.has(dayGroup.date)) {
+            const existingDayGroup = uniqueDayGroupsMap.get(dayGroup.date)!;
+
+            // Add trips that don't already exist (based on trip characteristics)
+            const dayGroupTrips = dayGroup.journeys.flatMap((journey) => journey.trips);
+            for (const trip of dayGroupTrips) {
+              const tripExists = existingDayGroup.journeys[existingDayGroup.journeys.length - 1].trips.some(
+                t => t.time === trip.time &&
+                     t.type === trip.type &&
+                     t.startLocation === trip.startLocation &&
+                     t.endLocation === trip.endLocation &&
+                     t.fare === trip.fare &&
+                     t.busService === trip.busService
+              );
+
+              if (!tripExists) {
+                existingDayGroup.journeys[existingDayGroup.journeys.length - 1].trips.push(trip);
+                existingDayGroup.totalFare += trip.fare;
+                existingDayGroup.totalDistance += trip.distance;
+                if (trip.type === 'bus') {
+                  existingDayGroup.busDistance += trip.distance;
+                } else {
+                  existingDayGroup.mrtDistance += trip.distance;
+                }
+              }
             }
+
+            // Merge trip issues
+            existingDayGroup.tripIssues.push(...dayGroup.tripIssues);
+          } else {
+            // Add new day group (create a copy to avoid reference issues)
+            uniqueDayGroupsMap.set(dayGroup.date, {
+              ...dayGroup,
+              journeys: [...dayGroup.journeys],
+              tripIssues: [...dayGroup.tripIssues]
+            });
           }
         } else {
-          console.log(`❌ Journey ${journey.date} (${journeyDateFormatted}) is NOT in range (${startDate} to ${endDate})`);
+          console.log(`❌ Day ${dayGroup.date} (${dayDateFormatted}) is NOT in range (${startDate} to ${endDate})`);
         }
       }
     }
 
-    // Convert Map values to array
-    const tripsInRange = Array.from(uniqueTripsMap.values());
-
-    console.log(`🎯 Total unique trips found in range: ${tripsInRange.length}`);
-
-    // Sort by date and time
-    tripsInRange.sort((a, b) => {
-      const dateCompare = a.date.localeCompare(b.date);
-      if (dateCompare !== 0) return dateCompare;
-      return a.time.localeCompare(b.time);
+    // Convert Map values to array and sort by date
+    const dayGroupsInRange = Array.from(uniqueDayGroupsMap.values());
+    dayGroupsInRange.sort((a, b) => {
+      const dateA = new Date(this.parseJourneyDate(a.date));
+      const dateB = new Date(this.parseJourneyDate(b.date));
+      return dateA.getTime() - dateB.getTime();
     });
 
-    return tripsInRange;
+    console.log(`🎯 Total unique day groups found in range: ${dayGroupsInRange.length}`);
+
+    return dayGroupsInRange;
+  }
+
+  /**
+   * @deprecated Use getDayGroupsByUserIdAndDateRange instead
+   * Get all trips/journeys for a user within a specified date range (inclusive)
+   */
+  async getJourneysByUserIdAndDateRange(
+    userId: string,
+    startDate: string,
+    endDate: string
+  ): Promise<Trip[]> {
+    const dayGroups = await this.getDayGroupsByUserIdAndDateRange(userId, startDate, endDate);
+
+    // Flatten day groups to individual trips for backward compatibility
+    const trips: Trip[] = [];
+    for (const dayGroup of dayGroups) {
+      const dayGroupTrips = dayGroup.journeys.flatMap((journey) => journey.trips);
+      for (const trip of dayGroupTrips) {
+        trips.push({
+          time: trip.time,
+          type: trip.type,
+          busService: trip.busService,
+          startLocation: trip.startLocation,
+          endLocation: trip.endLocation,
+          fare: trip.fare,
+          distance: trip.distance,
+        });
+      }
+    }
+
+    return trips;
   }
 
   async getConcessionFaresByUserIdAndDateRange(
@@ -179,24 +224,24 @@ export class StatementsRepository {
       }[]
     >`SELECT id, journeys_json FROM statements WHERE user_id = ${userId}`;
 
-    // Collect all journeys within the date range
-    const journeysInRange: Journey[] = [];
+    // Collect all day groups within the date range
+    const dayGroupsInRange: DayGroup[] = [];
 
     for (const statement of statements) {
-      const journeys: Journey[] = JSON.parse(statement.journeys_json);
+      const dayGroups: DayGroup[] = JSON.parse(statement.journeys_json);
 
-      for (const journey of journeys) {
-        // Parse journey date from "DD MMM YYYY" format to YYYY-MM-DD for comparison
-        const journeyDateFormatted = this.parseJourneyDate(journey.date);
+      for (const dayGroup of dayGroups) {
+        // Parse day group date from "DD MMM YYYY" format to YYYY-MM-DD for comparison
+        const dayDateFormatted = this.parseJourneyDate(dayGroup.date);
 
-        if (journeyDateFormatted >= startDate && journeyDateFormatted <= endDate) {
-          journeysInRange.push(journey);
+        if (dayDateFormatted >= startDate && dayDateFormatted <= endDate) {
+          dayGroupsInRange.push(dayGroup);
         }
       }
     }
 
     // Use existing concessionFareCalcService to calculate fares
-    const fares = await concessionFareCalcService.calculateFaresOnConcession(journeysInRange);
+    const fares = await concessionFareCalcService.calculateFaresOnConcession(dayGroupsInRange);
 
     return {
       totalFareExcludingBus: Math.round(fares.totalFareExcludingBus * 100) / 100,

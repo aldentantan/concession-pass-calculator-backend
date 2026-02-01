@@ -2,7 +2,7 @@ import { statementsRepository } from "../repositories/statementsRepository";
 import { pdfParserService } from "./pdfParserService";
 import { concessionFareCalcService } from "./concessionFareCalculatorService";
 import { supabase } from "../supabase";
-import type { Journey, TripWithMetadata } from "../types";
+import type { DayGroup, Trip } from "../types";
 
 class StatementsService {
   async getAllStatementsByUserId(userId: string) {
@@ -58,8 +58,8 @@ class StatementsService {
     await statementsRepository.deleteStatement(id);
   }
 
-  async getJourneysByStatementId(statementId: string): Promise<Journey[]> {
-    return await statementsRepository.getJourneysByStatementId(statementId);
+  async getDayGroupsByStatementId(statementId: string): Promise<DayGroup[]> {
+    return await statementsRepository.getDayGroupsByStatementId(statementId);
   }
 
   async createSignedLink(statementId: string): Promise<string> {
@@ -78,7 +78,7 @@ class StatementsService {
     return signedUrlData.signedUrl;
   }
 
-  async reanalyseStatement(statementId: string): Promise<{ journeys: Journey[]; fares: any }> {
+  async reanalyseStatement(statementId: string): Promise<{ dayGroups: DayGroup[]; fares: any }> {
     // Get file path of specific statement from statements DB table
     const filepath = await statementsRepository.getStatementFilePathById(statementId);
 
@@ -87,21 +87,21 @@ class StatementsService {
     if (error) throw new Error(`Failed to download PDF from storage`);
 
     // Parse PDF and calculate fares
-    const { journeys } = await pdfParserService.parsePdf(Buffer.from(await data.arrayBuffer()));
-    const fares = await concessionFareCalcService.calculateFaresOnConcession(journeys);
+    const { dayGroups } = await pdfParserService.parsePdf(Buffer.from(await data.arrayBuffer()));
+    const fares = await concessionFareCalcService.calculateFaresOnConcession(dayGroups);
 
-    return { journeys, fares };
+    return { dayGroups, fares };
   }
 
-  async getTripsInDateRange(
+  async getDayGroupsInDateRange(
     userId: string,
     startDate: string,
     endDate: string
-  ): Promise<TripWithMetadata[]> {
+  ): Promise<DayGroup[]> {
     if (!userId || !startDate || !endDate) {
       throw new Error("Missing required parameters: userId, startDate, endDate");
     }
-    return await statementsRepository.getJourneysByUserIdAndDateRange(
+    return await statementsRepository.getDayGroupsByUserIdAndDateRange(
       userId,
       startDate,
       endDate
