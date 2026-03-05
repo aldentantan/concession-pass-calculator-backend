@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
+import { concessionFareCalcService } from "../services/concessionFareCalculatorService";
 import { pdfParserService } from "../services/pdfParserService";
 import { statementsService } from "../services/statementsService";
-import { concessionFareCalcService } from "../services/concessionFareCalculatorService";
 
 export class StatementController {
   async getAll(req: Request, res: Response): Promise<Response> {
@@ -234,6 +234,44 @@ export class StatementController {
    * GET /api/statements/trips/range?userId=xxx&startDate=2024-01-01&endDate=2024-01-30
    * Retrieves day groups (with trips) for a user within a specified date range
    */
+  /**
+   * POST /api/statements/process-guest
+   * In-memory only: parse PDF → calculate fares → return results. No DB insert, no storage upload.
+   */
+  async processGuestStatement(req: Request, res: Response): Promise<Response> {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          error: "Invalid request",
+          message: "No PDF file uploaded",
+        });
+      }
+
+      const { dayGroups } = await pdfParserService.parsePdf(req.file.buffer);
+      const fares = await concessionFareCalcService.calculateFaresOnConcession(dayGroups);
+
+      return res.status(200).json({
+        message: "PDF processed successfully",
+        dayGroups,
+        fares,
+      });
+    } catch (error: Error | any) {
+      console.error("❌ Error processing guest statement:", error);
+
+      if (error instanceof Error) {
+        return res.status(400).json({
+          error: error.message,
+          message: error.message,
+        });
+      }
+
+      return res.status(500).json({
+        error: "Server error",
+        message: "An unexpected error occurred",
+      });
+    }
+  }
+
   async getDayGroupsInDateRange(req: Request, res: Response): Promise<Response> {
     try {
       const { userId, startDate, endDate } = req.query;

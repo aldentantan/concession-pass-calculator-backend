@@ -1,8 +1,10 @@
 import express from "express";
-import { authenticateToken } from "../middleware/authenticateToken";
+import multer from "multer";
 import { statementController } from "../controllers/statementsController";
+import { authenticateToken } from "../middleware/authenticateToken";
 
 const router = express.Router();
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
 // GET / - Retrieves all statements for authenticated user
 router.get("/", authenticateToken, (req, res) =>
@@ -29,6 +31,11 @@ router.get("/:id/create-signed-link", authenticateToken, (req, res) =>
 // POST /process - Processes uploaded SimplyGo PDF statement
 router.post("/process", authenticateToken, (req, res) =>
   statementController.processStatement(req, res)
+);
+
+// POST /process-guest - Processes a PDF for unauthenticated guest users (no persistence)
+router.post("/process-guest", upload.single("file"), (req, res) =>
+  statementController.processGuestStatement(req, res)
 );
 
 //POST /:id/reanalyse - Reanalyses an existing statement
