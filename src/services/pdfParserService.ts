@@ -112,8 +112,8 @@ class PdfParserService {
       );
     }
 
-    const marker = "Date Journey Charges";
-    const idx = lines.indexOf(marker);
+    const journeyHeaderPattern = /^Date.*Journey.*Charges$/i;
+    const idx = lines.findIndex((line) => journeyHeaderPattern.test(line));
 
     if (idx === -1) {
       throw new Error(
@@ -130,7 +130,7 @@ class PdfParserService {
     const dayPattern = /^\((\w{3})\)$/;
     const journeyRoutePattern = /^(.+?)\s+-\s+(.+?)$/; // Journey summary line: "START - END"
     const busTripPattern =
-      /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Bus\s+(\d+[A-Z]*)\s+(.+?)\s+-\s+(.+?)\s+\$\s*([\d.]+)$/i;
+      /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Bus\s+(\d+[A-Z]*)\s+(.+?)\s+-\s+(.+?)(?:\s+\$\s*([\d.]+))?$/i;
     const mrtTripPattern =
       /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Train\s+(.+?)\s+-\s+(.+?)(?:\s+\$\s*([\d.]+))?$/i;
 
@@ -244,7 +244,7 @@ class PdfParserService {
           busService: busMatch[2],
           startLocation: busMatch[3].trim(),
           endLocation: busMatch[4].trim(),
-          fare: parseFloat(busMatch[5]),
+          fare: parseFloat(busMatch[5] || "0"),
           distance: 0,
         };
 
