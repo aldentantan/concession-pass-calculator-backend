@@ -3,7 +3,7 @@ import multer from "multer";
 import { PDFParse } from "pdf-parse";
 import { busTripDistanceService } from "../services/busTripDistanceService";
 import { mrtTripDistanceService } from "../services/mrtTripDistanceService";
-import type { DayGroup, Trip, Journey, TripIssue } from "../types";
+import type { DayGroup, Trip } from "../types";
 
 const monthMapping: { [key: string]: string } = {
   January: "Jan",
@@ -269,11 +269,14 @@ class PdfParserService {
 
         // Log bus trip issues in the day group object if any
         if (busTripIssues.length > 0) {
-          busTripIssues.forEach((issue) => {
-            const tripIndexWithIssue = currJourney.trips.length - 1;
-            issue.tripIndex = tripIndexWithIssue;
-          });
-          currJourney.tripIssues.push(...busTripIssues);
+          const tripIndexWithIssue = currJourney.trips.length - 1;
+          const issuesWithTripIndex = busTripIssues.map((issue) => ({
+            ...issue,
+            tripIndex: tripIndexWithIssue,
+          }));
+
+          currJourney.tripIssues.push(...issuesWithTripIndex);
+          currentDayGroup.tripIssues.push(...issuesWithTripIndex);
         }
       }
 
