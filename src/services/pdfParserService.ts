@@ -309,9 +309,9 @@ class PdfParserService {
           currJourney.mrtDistance += mrtTripDistance;
           currentDayGroup.mrtDistance += mrtTripDistance;
           currentDayGroup.totalDistance += mrtTripDistance;
-          console.log(
-            `MRT trip from ${cleanedStartStation} to ${cleanedEndStation} is ${mrtTripDistance} km`,
-          );
+          // console.log(
+          //   `MRT trip from ${cleanedStartStation} to ${cleanedEndStation} is ${mrtTripDistance} km`,
+          // );
         }
       }
     }

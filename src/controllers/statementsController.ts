@@ -323,6 +323,7 @@ export class StatementController {
         count: totalTrips,
         totalFare: Math.round(totalFare * 100) / 100,
         concessionFares: {
+          totalFareWithNewPrices: concessionFares.totalFareWithNewPrices,
           totalFareExcludingBus: concessionFares.totalFareExcludingBus,
           totalFareExcludingMrt: concessionFares.totalFareExcludingMrt,
         },

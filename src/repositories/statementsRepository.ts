@@ -1,6 +1,6 @@
 import sql from "../db";
-import type { DayGroup, Trip } from "../types";
 import { concessionFareCalcService } from "../services/concessionFareCalculatorService";
+import type { DayGroup, Trip } from "../types";
 
 export class StatementsRepository {
   /**
@@ -215,7 +215,11 @@ export class StatementsRepository {
     userId: string,
     startDate: string,
     endDate: string
-  ): Promise<{ totalFareExcludingBus: number; totalFareExcludingMrt: number }> {
+  ): Promise<{
+    totalFareWithNewPrices: number;
+    totalFareExcludingBus: number;
+    totalFareExcludingMrt: number;
+  }> {
     // Get all statements for the user
     const statements = await sql<
       {
@@ -244,6 +248,7 @@ export class StatementsRepository {
     const fares = await concessionFareCalcService.calculateFaresOnConcession(dayGroupsInRange);
 
     return {
+      totalFareWithNewPrices: Math.round(fares.totalFareWithNewPrices * 100) / 100,
       totalFareExcludingBus: Math.round(fares.totalFareExcludingBus * 100) / 100,
       totalFareExcludingMrt: Math.round(fares.totalFareExcludingMrt * 100) / 100,
     };
