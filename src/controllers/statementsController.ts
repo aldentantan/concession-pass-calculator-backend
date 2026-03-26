@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import { Request, Response } from "express";
 import { concessionFareCalcService } from "../services/concessionFareCalculatorService";
 import { pdfParserService } from "../services/pdfParserService";
@@ -34,23 +35,54 @@ export class StatementController {
    * Complete workflow: download → parse → calculate → save
    */
   async processStatement(req: Request, res: Response): Promise<Response> {
-    try {
-      const { userId, signedUrl, storageFilePath, fileName, fileHash } =
-        req.body;
+    let storageFilePath: string | null = null;
+    let fileHash: string | null = null;
+    let uploadedToStorage = false;
 
-      if (!userId || !signedUrl || !storageFilePath || !fileName) {
-        return res.status(400).json({
-          error: "Invalid request",
-          message: "Missing required fields",
+    try {
+      const userId = (req as Request & { userId?: string }).userId;
+      const file = req.file;
+
+      if (!userId) {
+        return res.status(401).json({
+          error: "Unauthorized",
+          message: "User identity is missing",
         });
       }
 
-      // Download PDF from Supabase storage bucket
-      const response = await fetch(signedUrl);
-      const arrayBuffer = await response.arrayBuffer();
-      const pdfBuffer = Buffer.from(arrayBuffer);
+      if (!file) {
+        return res.status(400).json({
+          error: "Invalid request",
+          message: "No PDF file uploaded",
+        });
+      }
 
-      const { month, year, dayGroups } = await pdfParserService.parsePdf(pdfBuffer);
+      if (file.mimetype !== "application/pdf") {
+        return res.status(400).json({
+          error: "Invalid file type",
+          message: "Only PDF files are supported",
+        });
+      }
+
+      fileHash = createHash("sha256").update(file.buffer).digest("hex");
+      const existingStatement = await statementsService.getStatementByFileHash(
+        fileHash
+      );
+
+      if (existingStatement) {
+        return res.status(409).json({
+          error: "Duplicate PDF detected",
+          message: "This PDF has already been uploaded.",
+        });
+      }
+
+      const sanitizedFilename = file.originalname.replace(/[^a-zA-Z0-9.-]/g, "_");
+      storageFilePath = `${userId}/${fileHash}-${sanitizedFilename}`;
+
+      await statementsService.uploadPdfToStorage(storageFilePath, file.buffer);
+      uploadedToStorage = true;
+
+      const { month, year, dayGroups } = await pdfParserService.parsePdf(file.buffer);
       const fares = await concessionFareCalcService.calculateFaresOnConcession(
         dayGroups
       );
@@ -63,7 +95,7 @@ export class StatementController {
       const statement = await statementsService.createStatement({
         userId,
         filePath: storageFilePath,
-        fileName,
+        fileName: file.originalname,
         fileHash,
         statementMonth: month,
         statementYear: year,
@@ -82,6 +114,19 @@ export class StatementController {
       });
     } catch (error: Error | any) {
       console.error("❌ Error processing statement:", error);
+
+      if (uploadedToStorage && storageFilePath && fileHash) {
+        try {
+          const existingStatement = await statementsService.getStatementByFileHash(
+            fileHash
+          );
+          if (!existingStatement) {
+            await statementsService.removePdfFromStorage(storageFilePath);
+          }
+        } catch (cleanupError) {
+          console.error("❌ Failed to cleanup uploaded PDF:", cleanupError);
+        }
+      }
 
       if (error.message.toLowerCase().includes("duplicate key")) {
         return res.status(409).json({

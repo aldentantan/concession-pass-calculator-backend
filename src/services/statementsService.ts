@@ -1,8 +1,8 @@
 import { statementsRepository } from "../repositories/statementsRepository";
-import { pdfParserService } from "./pdfParserService";
-import { concessionFareCalcService } from "./concessionFareCalculatorService";
 import { supabase } from "../supabase";
-import type { DayGroup, Trip } from "../types";
+import type { DayGroup } from "../types";
+import { concessionFareCalcService } from "./concessionFareCalculatorService";
+import { pdfParserService } from "./pdfParserService";
 
 class StatementsService {
   async getAllStatementsByUserId(userId: string) {
@@ -16,6 +16,7 @@ class StatementsService {
     if (!values) {
       throw new Error("Missing values to insert into the statements table");
     }
+    console.log("Creating statement with values:", values);
     if (
       !values.userId ||
       !values.filePath ||
@@ -31,7 +32,7 @@ class StatementsService {
         "Missing required date fields: statementMonth, statementYear"
       );
     }
-    if (!values.journeyCount || !values.totalFare) {
+    if (values.journeyCount == null || values.totalFare == null) {
       throw new Error(
         "Missing required numeric fields: journeyCount, totalFare"
       );
@@ -43,19 +44,51 @@ class StatementsService {
     return await statementsRepository.updateStatement(id, updates);
   }
 
+  async getStatementByFileHash(fileHash: string) {
+    if (!fileHash) {
+      throw new Error("Missing fileHash to retrieve statement");
+    }
+
+    return await statementsRepository.getStatementByFileHash(fileHash);
+  }
+
+  async uploadPdfToStorage(filePath: string, fileBuffer: Buffer): Promise<void> {
+    const { error } = await supabase.storage
+      .from("simplygo-pdf")
+      .upload(filePath, fileBuffer, {
+        cacheControl: "3600",
+        upsert: false,
+        contentType: "application/pdf",
+      });
+
+    if (error) {
+      throw new Error(`Upload failed: ${error.message}`);
+    }
+  }
+
+  async removePdfFromStorage(filePath: string): Promise<void> {
+    const deleteResult = await supabase.storage
+      .from("simplygo-pdf")
+      .remove([filePath]);
+
+    if (deleteResult.error) {
+      throw new Error("Failed to delete SimplyGo statement PDF from storage");
+    }
+  }
+
   async deleteStatement(id: string): Promise<void> {
     if (!id) {
       throw new Error("Missing statement ID to delete statement");
     }
     const filepath = await statementsRepository.getStatementFilePathById(id);
-    const deleteResult = await supabase.storage
-      .from("simplygo-pdf")
-      .remove([filepath]);
-    if (deleteResult.error) {
-      console.log("Error deleting file from storage:", deleteResult.error);
-      throw new Error("Failed to delete SimplyGo statement PDF from storage");
-    }
     await statementsRepository.deleteStatement(id);
+
+    try {
+      await this.removePdfFromStorage(filepath);
+    } catch (error) {
+      console.log("Error deleting file from storage:", error);
+      throw error;
+    }
   }
 
   async getDayGroupsByStatementId(statementId: string): Promise<DayGroup[]> {

@@ -29,7 +29,7 @@ router.get("/:id/create-signed-link", authenticateToken, (req, res) =>
 );
 
 // POST /process - Processes uploaded SimplyGo PDF statement
-router.post("/process", authenticateToken, (req, res) =>
+router.post("/process", authenticateToken, upload.single("file"), (req, res) =>
   statementController.processStatement(req, res)
 );
 

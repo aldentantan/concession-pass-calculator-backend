@@ -81,6 +81,14 @@ export class StatementsRepository {
     return result[0].file_path;
   }
 
+  async getStatementByFileHash(fileHash: string) {
+    const result = await sql<
+      { id: string; user_id: string; file_path: string; file_hash: string }[]
+    >`SELECT id, user_id, file_path, file_hash FROM statements WHERE file_hash = ${fileHash} LIMIT 1`;
+
+    return result[0] ?? null;
+  }
+
   /**
    * Get all day groups for a user within a specified date range (inclusive)
    * Queries across all statements for the user and filters day groups by date

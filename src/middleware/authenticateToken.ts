@@ -38,7 +38,9 @@ export const authenticateToken = async (
     }
 
     // Verify and decode the JWT token
-    const decoded = jwt.verify(token, jwtSecret) as any;
+    const decoded = jwt.verify(token, jwtSecret) as { sub?: string };
+
+    (req as Request & { userId?: string }).userId = decoded.sub;
 
     // Token is valid, proceed to next middleware/route
     next();
