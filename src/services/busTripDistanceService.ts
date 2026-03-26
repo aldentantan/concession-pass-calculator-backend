@@ -26,21 +26,20 @@ class BusTripDistanceService {
             if (startBusStopCodes?.[0] === "46101") startBusStopCodes = ["46109"];
 
             if (!startBusStopCodes) {
+                console.warn(`Could not find bus stop for: ${startStopName} in bus service ${busService}`);
                 issues.push({
                     code: 'BUS_STOP_NOT_FOUND',
                     message: `Could not find bus stop: ${startStopName}`,
                     busService,
                     unknownStopName: startStopName
                 })
-                // console.log(`Fuzzy matched start bus stop: ${startBusStopCodes}`);
             }
         }
 
         if (!endBusStopCodes) {
-            // console.log(`Bus stop codes not found for ${endStopName}`);
             endBusStopCodes = await busStopFuzzyMatchService.findBusStop(endStopName);
             if (!endBusStopCodes) {
-                // console.log(`Fuzzy matched end bus stop: ${endBusStopCodes}`);
+                console.warn(`Could not find bus stop for ${endStopName} in bus service ${busService}`);
                 issues.push({
                     code: 'BUS_STOP_NOT_FOUND',
                     message: `Could not find bus stop: ${endStopName}`,
