@@ -26,7 +26,7 @@ export class MrtRepository {
     const result = await sql<{ id: number }[]>`
             SELECT id
             FROM mrt_stations
-            WHERE station_name = ${station_name}
+            WHERE UPPER(station_name) LIKE UPPER(${`%${station_name}%`})
         `;
     return result.length > 0 ? result[0].id : null;
   }

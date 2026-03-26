@@ -19,7 +19,7 @@ export class BusRepository {
     const result = await sql<{ bus_stop_code: string }[]>`
             SELECT bus_stop_code
             FROM lta_bus_stops
-            WHERE bus_stop_name = ${bus_stop_name}
+            WHERE UPPER(bus_stop_name) LIKE UPPER(${`%${bus_stop_name}%`})
         `;
     if (result.length > 0) {
       return result.map((r) => r.bus_stop_code);

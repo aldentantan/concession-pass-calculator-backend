@@ -84,7 +84,7 @@ class PdfParserService {
     // Remove common MRT line codes at the end
     // Pattern: station name followed by space and 2-4 letter line code (e.g. "Serangoon CCL")
     return stationName
-      .replace(/\s+(NEL|NSL|EWL|CCL|DTL|TEL|NSEW)$/i, "")
+      .replace(/\s+(NEL|NSL|EWL|CCL|DTL|TEL|NSEW|BPLRT)$/i, "")
       .trim();
   }
 

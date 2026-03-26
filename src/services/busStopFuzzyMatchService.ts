@@ -53,10 +53,18 @@ class BusStopFuzzyMatchService {
    */
   private normalizeStopName(name: string): string {
     return name
-      .replace(/\b(boarding & alighting|alighting|boarding|board|alight|berth)\b/gi, '') // Remove common prefixes
-      .replace(/\bInterchange\b/gi, 'Int') // Remove "Interchange"
+      .replace(/\bTemp(?:orary)?\s+Int(?:erchange)?\b/gi, 'Int')
+      .replace(/\bInterchange\b/gi, 'Int')
+      .replace(/\b(?:Boarding|Alighting)\s+(?:Berth|Bay)\s+\d+(?:\s*(?:&|and|to|-)\s*\d+)*\b/gi, '')
+      .replace(/\b(?:Boarding|Alighting)\s+\d+\b/gi, '')
+      .replace(/\b(?:Boarding|Alighting)\s+(?:Berth|Bay)\b/gi, '')
+      .replace(/\b(?:Berth|Bay)\s*\d+\b/gi, '')
+      .replace(/\bB\d+\b$/gi, '')
+      .replace(/\b(boarding & alighting|alighting|boarding|board|alight|berth)\b/gi, '')
+      .replace(/\bBI\b/gi, 'Int')
       .replace(/\bEO\b/g, '') // Remove "EO" if case-sensitive
       .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      .replace(/\bBukit\s+Batok\b/gi, 'Bt Batok')
       .trim();
   }
 }
