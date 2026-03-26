@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "ts-node-dev --respawn src/index.ts",
     "start": "node dist/index.js",
-    "build": "tsc"
+    "build": "tsc",
+    "ingest:bus-stops": "npx ts-node src/scripts/ingestLtaBusStops.ts",
+    "ingest:bus-routes": "npx ts-node src/scripts/ingestLtaBusRoutes.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.89.0",
