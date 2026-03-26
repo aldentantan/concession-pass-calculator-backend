@@ -63,6 +63,7 @@ class BusStopFuzzyMatchService {
       .replace(/\b(boarding & alighting|alighting|boarding|board|alight|berth)\b/gi, '')
       .replace(/\bBI\b/gi, 'Int')
       .replace(/\bEO\b/g, '') // Remove "EO" if case-sensitive
+      .replace(/\bWoodlands\s+Health\s+Campus\b/gi, "W'lands Hosp")
       .replace(/\s+/g, ' ') // Replace multiple spaces with single space
       .replace(/\bBukit\s+Batok\b/gi, 'Bt Batok')
       .trim();
