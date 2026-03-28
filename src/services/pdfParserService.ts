@@ -88,6 +88,20 @@ class PdfParserService {
       .trim();
   }
 
+  /**
+   * Protect known stop names that legitimately contain " - " so they are not
+   * treated as the route delimiter during regex parsing.
+   */
+  private protectKnownHyphenatedStopNames(value: string): string {
+    return value
+      .replace(/\bUTown\s+-\s+RC4\b/gi, "UTown__DASH__RC4")
+      .replace(/\bUTown\s+-\s+Cendana\b/gi, "UTown__DASH__Cendana");
+  }
+
+  private restoreProtectedStopNames(value: string): string {
+    return value.replace(/__DASH__/g, " - ");
+  }
+
   private async parseSimplyGoText(text: string): Promise<DayGroup[]> {
     const dayGroupsMap = new Map<string, DayGroup>();
 
@@ -139,9 +153,8 @@ class PdfParserService {
     let skipCurrentJourney = false; // Flag to skip journeys from other months
 
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-
-      // Check if this is any date line (from any month)
+      const line = this.protectKnownHyphenatedStopNames(lines[i]);
+            // Check if this is any date line (from any month)
       const anyDateMatch = line.match(anyDatePattern);
       if (anyDateMatch) {
         // Check if it's a date from the statement month
@@ -226,8 +239,12 @@ class PdfParserService {
           !line.match(/^\d{1,2}:\d{2}\s+(?:AM|PM)/i) &&
           !line.startsWith("$")
         ) {
-          currentJourney.startLocation = journeyRouteMatch[1].trim();
-          currentJourney.endLocation = journeyRouteMatch[2].trim();
+          currentJourney.startLocation = this.restoreProtectedStopNames(
+            journeyRouteMatch[1].trim(),
+          );
+          currentJourney.endLocation = this.restoreProtectedStopNames(
+            journeyRouteMatch[2].trim(),
+          );
           continue;
         }
       }
@@ -238,12 +255,15 @@ class PdfParserService {
       // Pattern for Bus trips: "HH:MM AM/PM Bus [NUMBER] [START] - [END] $ [FARE]"
       const busMatch = line.match(busTripPattern);
       if (busMatch) {
+        const parsedBusStart = this.restoreProtectedStopNames(busMatch[3].trim());
+        const parsedBusEnd = this.restoreProtectedStopNames(busMatch[4].trim());
+
         const trip: Trip = {
           time: busMatch[1],
           type: "bus",
           busService: busMatch[2],
-          startLocation: busMatch[3].trim(),
-          endLocation: busMatch[4].trim(),
+          startLocation: parsedBusStart,
+          endLocation: parsedBusEnd,
           fare: parseFloat(busMatch[5] || "0"),
           distance: 0,
         };
@@ -255,8 +275,8 @@ class PdfParserService {
         const { distanceKm: busDistance, issues: busTripIssues } =
           await busTripDistanceService.calculateBusTripDistance(
             busMatch[2], // Bus service number
-            busMatch[3].trim(), // Source bus stop name
-            busMatch[4].trim(), // Destination bus stop name
+            parsedBusStart, // Source bus stop name
+            parsedBusEnd, // Destination bus stop name
           );
 
         // Add bus trip distance to the current day group
@@ -283,8 +303,12 @@ class PdfParserService {
       // Pattern for Train/MRT trips: "HH:MM AM/PM Train [START] - [END] $ [FARE]"
       const mrtMatch = line.match(mrtTripPattern);
       if (mrtMatch) {
-        const cleanedStartStation = this.cleanStationName(mrtMatch[2].trim());
-        const cleanedEndStation = this.cleanStationName(mrtMatch[3].trim());
+        const cleanedStartStation = this.cleanStationName(
+          this.restoreProtectedStopNames(mrtMatch[2].trim()),
+        );
+        const cleanedEndStation = this.cleanStationName(
+          this.restoreProtectedStopNames(mrtMatch[3].trim()),
+        );
 
         const trip: Trip = {
           time: mrtMatch[1],
