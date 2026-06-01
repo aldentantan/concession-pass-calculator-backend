@@ -27,6 +27,8 @@ export interface Journey {
     startLocation: string;
     endLocation: string;
     tripIssues: TripIssue[];
+    fareSource: 'statement' | 'pass_usage';
+    statementFare: number | null;
     mrtDistance: number;
     busDistance: number;
     fareExcludingBus: number;

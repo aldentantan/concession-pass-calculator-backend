@@ -203,6 +203,8 @@ class PdfParserService {
           endLocation: "",
           trips: [],
           tripIssues: [],
+          fareSource: "statement",
+          statementFare: 0,
           busDistance: 0,
           mrtDistance: 0,
           fareExcludingBus: 0,
@@ -252,6 +254,12 @@ class PdfParserService {
       const currJourney =
         currentDayGroup.journeys[currentDayGroup.journeys.length - 1];
 
+      if (/^Pass Usage$/i.test(line)) {
+        currJourney.fareSource = "pass_usage";
+        currJourney.statementFare = null;
+        continue;
+      }
+
       // Pattern for Bus trips: "HH:MM AM/PM Bus [NUMBER] [START] - [END] $ [FARE]"
       const busMatch = line.match(busTripPattern);
       if (busMatch) {
@@ -270,6 +278,9 @@ class PdfParserService {
 
         currJourney.trips.push(trip);
         currJourney.totalFare += trip.fare;
+        if (currJourney.statementFare !== null) {
+          currJourney.statementFare += trip.fare;
+        }
         currentDayGroup.totalFare += trip.fare;
 
         const { distanceKm: busDistance, issues: busTripIssues } =
@@ -321,6 +332,9 @@ class PdfParserService {
 
         currJourney.trips.push(trip);
         currJourney.totalFare += trip.fare;
+        if (currJourney.statementFare !== null) {
+          currJourney.statementFare += trip.fare;
+        }
         currentDayGroup.totalFare += trip.fare;
 
         const mrtTripDistance = await mrtTripDistanceService.getDistanceKm(

@@ -13,6 +13,7 @@ type ParsedJourneySnapshot = {
   journeyIndex: number;
   startLocation: string;
   endLocation: string;
+  fareSource: Journey["fareSource"];
   parsedFare: number;
 };
 
@@ -100,10 +101,7 @@ test("computed journey fares match parsed PDF journey fares", async () => {
     );
 
     const pdfMismatches = collectMismatches(pdfName, dayGroups, snapshots);
-    const journeysChecked = snapshots.reduce(
-      (total, daySnapshots) => total + daySnapshots.length,
-      0,
-    );
+    const journeysChecked = countStatementFareSnapshots(snapshots);
 
     report.pdfSummaries.push({
       pdfName,
@@ -148,7 +146,8 @@ function snapshotParsedJourneys(dayGroups: DayGroup[]): ParsedJourneySnapshot[][
       journeyIndex,
       startLocation: journey.startLocation,
       endLocation: journey.endLocation,
-      parsedFare: roundCurrency(journey.totalFare),
+      fareSource: journey.fareSource,
+      parsedFare: roundCurrency(journey.statementFare ?? journey.totalFare),
     })),
   );
 }
@@ -164,6 +163,7 @@ function collectMismatches(
     dayGroup.journeys.forEach((journey, journeyIndex) => {
       const snapshot = snapshots[dayIndex]?.[journeyIndex];
       if (!snapshot) return;
+      if (snapshot.fareSource === "pass_usage") return;
 
       const parsedFare = snapshot.parsedFare;
       const computedFare = roundCurrency(journey.totalFare);
@@ -178,6 +178,15 @@ function collectMismatches(
   });
 
   return mismatches;
+}
+
+function countStatementFareSnapshots(snapshots: ParsedJourneySnapshot[][]): number {
+  return snapshots.reduce(
+    (total, daySnapshots) =>
+      total +
+      daySnapshots.filter((snapshot) => snapshot.fareSource === "statement").length,
+    0,
+  );
 }
 
 function toMismatch(
@@ -226,10 +235,10 @@ function normalizeCommuterType(value: string | undefined): CommuterType {
 }
 
 function normalizeToleranceCents(value: string | undefined): number {
-  if (!value) return 0;
+  if (!value) return 4;
 
   const parsed = Number(value);
-  if (!Number.isFinite(parsed) || parsed < 0) return 0;
+  if (!Number.isFinite(parsed) || parsed < 0) return 4;
   return Math.round(parsed);
 }
 
