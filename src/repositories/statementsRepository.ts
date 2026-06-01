@@ -262,16 +262,6 @@ export class StatementsRepository {
     };
   }
 
-  private async calculateFareByDistance(distance: number): Promise<number> {
-    const fareRow = await sql<{ fare: number }[]>`
-      SELECT fare
-      FROM fare_table
-      WHERE ${distance} BETWEEN min_distance_km AND max_distance_km
-      ORDER BY fare ASC
-      LIMIT 1
-    `;
-    return fareRow.length > 0 ? fareRow[0].fare : 0;
-  }
 }
 
 export const statementsRepository = new StatementsRepository();

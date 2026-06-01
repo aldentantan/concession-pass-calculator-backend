@@ -63,6 +63,8 @@ export interface FareTable {
   fare: number;
 }
 
+export type CommuterType = 'adult' | 'student';
+
 export interface TripIssue {
   code: 'BUS_STOP_NOT_FOUND' | 'MRT_STATION_NOT_FOUND';
   message: string;
