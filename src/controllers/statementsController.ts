@@ -3,6 +3,11 @@ import { Request, Response } from "express";
 import { concessionFareCalcService } from "../services/concessionFareCalculatorService";
 import { pdfParserService } from "../services/pdfParserService";
 import { statementsService } from "../services/statementsService";
+import type { CommuterType } from "../types";
+
+function normalizeCommuterType(value: unknown): CommuterType {
+  return value === "student" ? "student" : "adult";
+}
 
 export class StatementController {
   async getAll(req: Request, res: Response): Promise<Response> {
@@ -83,8 +88,10 @@ export class StatementController {
       uploadedToStorage = true;
 
       const { month, year, dayGroups } = await pdfParserService.parsePdf(file.buffer);
+      const commuterType = normalizeCommuterType(req.body?.commuterType);
       const fares = await concessionFareCalcService.calculateFaresOnConcession(
-        dayGroups
+        dayGroups,
+        commuterType
       );
       const totalFare = dayGroups.reduce((sum, day) => sum + day.totalFare, 0); // Ensures consistent total fare calculation, in case of discrepancy due to distance calculation
       const totalJourneys = dayGroups.reduce(
@@ -293,7 +300,8 @@ export class StatementController {
       }
 
       const { dayGroups } = await pdfParserService.parsePdf(req.file.buffer);
-      const fares = await concessionFareCalcService.calculateFaresOnConcession(dayGroups);
+      const commuterType = normalizeCommuterType(req.body?.commuterType);
+      const fares = await concessionFareCalcService.calculateFaresOnConcession(dayGroups, commuterType);
 
       return res.status(200).json({
         message: "PDF processed successfully",
@@ -320,6 +328,7 @@ export class StatementController {
   async getDayGroupsInDateRange(req: Request, res: Response): Promise<Response> {
     try {
       const { userId, startDate, endDate } = req.query;
+      const commuterType = normalizeCommuterType(req.query.commuterType);
 
       // Validate required parameters
       if (!userId || !startDate || !endDate) {
@@ -355,7 +364,8 @@ export class StatementController {
       const concessionFares = await statementsService.getConcessionFaresForDateRange(
         userId as string,
         startDate as string,
-        endDate as string
+        endDate as string,
+        commuterType
       );
 
       // Calculate totals from day groups

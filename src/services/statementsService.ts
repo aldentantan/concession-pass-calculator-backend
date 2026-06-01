@@ -1,6 +1,6 @@
 import { statementsRepository } from "../repositories/statementsRepository";
 import { supabase } from "../supabase";
-import type { DayGroup } from "../types";
+import type { CommuterType, DayGroup } from "../types";
 import { concessionFareCalcService } from "./concessionFareCalculatorService";
 import { pdfParserService } from "./pdfParserService";
 
@@ -144,7 +144,8 @@ class StatementsService {
   async getConcessionFaresForDateRange(
     userId: string,
     startDate: string,
-    endDate: string
+    endDate: string,
+    commuterType: CommuterType = "adult"
   ) {
     if (!userId || !startDate || !endDate) {
       throw new Error("Missing required parameters: userId, startDate, endDate");
@@ -152,7 +153,8 @@ class StatementsService {
     return await statementsRepository.getConcessionFaresByUserIdAndDateRange(
       userId,
       startDate,
-      endDate
+      endDate,
+      commuterType
     );
   }
 }

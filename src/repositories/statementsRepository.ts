@@ -1,6 +1,6 @@
 import sql from "../db";
 import { concessionFareCalcService } from "../services/concessionFareCalculatorService";
-import type { DayGroup, Trip } from "../types";
+import type { CommuterType, DayGroup, Trip } from "../types";
 
 export class StatementsRepository {
   /**
@@ -222,7 +222,8 @@ export class StatementsRepository {
   async getConcessionFaresByUserIdAndDateRange(
     userId: string,
     startDate: string,
-    endDate: string
+    endDate: string,
+    commuterType: CommuterType = "adult"
   ): Promise<{
     totalFareWithNewPrices: number;
     totalFareExcludingBus: number;
@@ -253,7 +254,7 @@ export class StatementsRepository {
     }
 
     // Use existing concessionFareCalcService to calculate fares
-    const fares = await concessionFareCalcService.calculateFaresOnConcession(dayGroupsInRange);
+    const fares = await concessionFareCalcService.calculateFaresOnConcession(dayGroupsInRange, commuterType);
 
     return {
       totalFareWithNewPrices: Math.round(fares.totalFareWithNewPrices * 100) / 100,
