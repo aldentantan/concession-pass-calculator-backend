@@ -253,6 +253,7 @@ export class StatementsRepository {
       }
     }
 
+    // why is repository calling service??
     // Use existing concessionFareCalcService to calculate fares
     const fares = await concessionFareCalcService.calculateFaresOnConcession(dayGroupsInRange, commuterType);
 

@@ -1,11 +1,8 @@
 import { busRepository } from "../repositories/busRepository";
 import { busStopFuzzyMatchService } from "./busStopFuzzyMatchService";
-import type { TripIssue } from "../types";
+import type { TripDistanceResult, TripIssue } from "../types";
 
-type BusTripDistanceResult = {
-    distanceKm: number | null;
-    issues: TripIssue[];
-}
+export type BusTripDistanceResult = TripDistanceResult;
 
 class BusTripDistanceService {
     async calculateBusTripDistance(busService: string, startStopName: string, endStopName: string): Promise<BusTripDistanceResult> {
@@ -79,6 +76,7 @@ class BusTripDistanceService {
                 }
             }
         }
+
         return {
             distanceKm: null,
             issues

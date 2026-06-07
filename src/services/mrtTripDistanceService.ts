@@ -1,22 +1,56 @@
 import { mrtRepository } from "../repositories/mrtRepository";
 import { mrtGraphService } from "./mrtGraphService";
+import type { TripDistanceResult, TripIssue } from "../types";
 
 class MrtTripDistanceService {
-  async getDistanceKm(startName: string, endName: string): Promise<number | null> {
-    if (startName === endName) return 0;
+  async calculateMrtTripDistance(
+    startName: string,
+    endName: string,
+  ): Promise<TripDistanceResult> {
+    const issues: TripIssue[] = [];
+
+    if (startName === endName) {
+      return { distanceKm: 0, issues };
+    }
 
     const startId = await mrtRepository.getStationIdByName(startName);
     const endId = await mrtRepository.getStationIdByName(endName);
 
-    if (!startId || !endId) {
-      console.warn("Unknown MRT station(s):", { startName, endName });
-      return null;
+    if (!startId) {
+      issues.push({
+        code: "MRT_STATION_NOT_FOUND",
+        message: `Could not find MRT station: ${startName}`,
+        unknownStopName: startName,
+      });
     }
 
-    if (startId === endId) return 0;
+    if (!endId) {
+      issues.push({
+        code: "MRT_STATION_NOT_FOUND",
+        message: `Could not find MRT station: ${endName}`,
+        unknownStopName: endName,
+      });
+    }
+
+    if (!startId || !endId) {
+      console.warn("Unknown MRT station(s):", { startName, endName });
+      return { distanceKm: null, issues };
+    }
+
+    if (startId === endId) {
+      return { distanceKm: 0, issues };
+    }
 
     const adjacency = await mrtGraphService.getAdjacency();
-    return this.dijkstra(adjacency, startId, endId);
+    return {
+      distanceKm: this.dijkstra(adjacency, startId, endId),
+      issues,
+    };
+  }
+
+  async getDistanceKm(startName: string, endName: string): Promise<number | null> {
+    const result = await this.calculateMrtTripDistance(startName, endName);
+    return result.distanceKm;
   }
 
   private dijkstra(
