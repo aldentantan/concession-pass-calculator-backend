@@ -1,8 +1,7 @@
 import fs from "fs";
 import multer from "multer";
 import { PDFParse } from "pdf-parse";
-import { busTripDistanceService } from "../services/busTripDistanceService";
-import { mrtTripDistanceService } from "../services/mrtTripDistanceService";
+import { tripDistanceLookupService } from "./tripDistanceLookupService";
 import type { DayGroup, Trip } from "../types";
 
 const monthMapping: { [key: string]: string } = {
@@ -283,32 +282,7 @@ class PdfParserService {
         }
         currentDayGroup.totalFare += trip.fare;
 
-        const { distanceKm: busDistance, issues: busTripIssues } =
-          await busTripDistanceService.calculateBusTripDistance(
-            busMatch[2], // Bus service number
-            parsedBusStart, // Source bus stop name
-            parsedBusEnd, // Destination bus stop name
-          );
-
-        // Add bus trip distance to the current day group
-        if (busDistance) {
-          trip.distance = busDistance;
-          currJourney.busDistance += busDistance;
-          currentDayGroup.busDistance += busDistance;
-          currentDayGroup.totalDistance += busDistance;
-        }
-
-        // Log bus trip issues in the day group object if any
-        if (busTripIssues.length > 0) {
-          const tripIndexWithIssue = currJourney.trips.length - 1;
-          const issuesWithTripIndex = busTripIssues.map((issue) => ({
-            ...issue,
-            tripIndex: tripIndexWithIssue,
-          }));
-
-          currJourney.tripIssues.push(...issuesWithTripIndex);
-          currentDayGroup.tripIssues.push(...issuesWithTripIndex);
-        }
+        continue;
       }
 
       // Pattern for Train/MRT trips: "HH:MM AM/PM Train [START] - [END] $ [FARE]"
@@ -337,25 +311,26 @@ class PdfParserService {
         }
         currentDayGroup.totalFare += trip.fare;
 
-        const mrtTripDistance = await mrtTripDistanceService.getDistanceKm(
-          cleanedStartStation, // Start station name
-          cleanedEndStation, // End station name
-        );
-
-        if (mrtTripDistance) {
-          trip.distance = mrtTripDistance;
-          currJourney.mrtDistance += mrtTripDistance;
-          currentDayGroup.mrtDistance += mrtTripDistance;
-          currentDayGroup.totalDistance += mrtTripDistance;
-          // console.log(
-          //   `MRT trip from ${cleanedStartStation} to ${cleanedEndStation} is ${mrtTripDistance} km`,
-          // );
-        }
+        continue;
       }
     }
 
     // Convert map to array and sort by date, then sort trips within each day by time
     const dayGroups = Array.from(dayGroupsMap.values());
+
+    const distanceMetrics =
+      await tripDistanceLookupService.resolveTripDistances(dayGroups);
+    console.log(
+      [
+        "Trip distance lookup:",
+        `totalTrips=${distanceMetrics.totalTrips}`,
+        `uniqueSignatures=${distanceMetrics.uniqueTripSignatures}`,
+        `cacheHits=${distanceMetrics.cacheHits}`,
+        `cacheMisses=${distanceMetrics.cacheMisses}`,
+        `duplicateTripsAvoided=${distanceMetrics.duplicateTripsAvoided}`,
+        `elapsedMs=${distanceMetrics.elapsedMs}`,
+      ].join(" "),
+    );
 
     // Sort day groups by date (oldest first)
     dayGroups.sort((a, b) => {

@@ -1,0 +1,35 @@
+services:
+  redis:
+    image: redis:latest
+    container_name: concession-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+    container_name: concession-backend
+    env_file:
+      - .env
+    environment:
+      PORT: "8080"
+      CACHE_BACKEND: "redis"
+      REDIS_URL: "redis://redis:6379"
+      TRIP_DISTANCE_CACHE_NAMESPACE: "trip-distance"
+      TRIP_DISTANCE_CACHE_TTL_MS: "86400000"
+    ports:
+      - "3000:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  redis-data:

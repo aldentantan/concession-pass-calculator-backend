@@ -8,6 +8,8 @@ export interface Trip {
   distance: number;
 }
 
+export type TripDistCacheKey = string;
+
 // Trips grouped by their date
 export interface DayGroup {
   date: string; // "DD MMM YYYY" format e.g. "01 Oct 2025"
@@ -73,4 +75,9 @@ export interface TripIssue {
   tripIndex?: number;
   busService?: string;
   unknownStopName: string;
+}
+
+export interface TripDistanceResult {
+  distanceKm: number | null;
+  issues: TripIssue[];
 }
