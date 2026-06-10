@@ -1,6 +1,5 @@
 import type { DayGroup, Trip, TripDistanceResult } from "../types";
 import {
-  InMemoryTripDistanceCache,
   tripDistCache,
   type TripDistanceCacheStore,
 } from "../cache/tripDistCache";
@@ -32,7 +31,7 @@ type TripDistanceLookup = {
 export class TripDistanceLookupService {
   constructor(
     private cache: TripDistanceCacheStore = tripDistCache,
-    private ttlMs = DEFAULT_TRIP_DISTANCE_CACHE_TTL_MS,
+    private ttlMs = getTripDistanceCacheTtlMs(),
     private calculateTripDistance: TripDistanceCalculator =
       defaultTripDistanceCalculator,
   ) {}
@@ -41,7 +40,7 @@ export class TripDistanceLookupService {
     trip: Pick<Trip, "type" | "busService" | "startLocation" | "endLocation">,
   ): Promise<TripDistanceLookup> {
     const key = buildTripDistanceCacheKey(trip);
-    const cachedResult = this.cache.get(key);
+    const cachedResult = await this.cache.get(key);
 
     if (cachedResult !== undefined) {
       return {
@@ -52,7 +51,7 @@ export class TripDistanceLookupService {
     }
 
     const result = await this.calculateTripDistance(trip);
-    this.cache.set(key, result, this.ttlMs);
+    await this.cache.set(key, result, this.ttlMs);
 
     return {
       cacheHit: false,
@@ -172,5 +171,13 @@ async function defaultTripDistanceCalculator(
 }
 
 export const tripDistanceLookupService = new TripDistanceLookupService();
-export const createInMemoryTripDistanceCache = () =>
-  new InMemoryTripDistanceCache();
+
+function getTripDistanceCacheTtlMs(): number {
+  const configuredTtl = Number(process.env.TRIP_DISTANCE_CACHE_TTL_MS);
+
+  if (Number.isFinite(configuredTtl) && configuredTtl > 0) {
+    return Math.round(configuredTtl);
+  }
+
+  return DEFAULT_TRIP_DISTANCE_CACHE_TTL_MS;
+}

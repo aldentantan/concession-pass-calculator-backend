@@ -61,6 +61,50 @@ concession-pass-calculator-backend
 
 4. Create a `.env` file based on the `.env.example` file and configure your environment variables.
 
+### Trip Distance Cache
+
+Trip distance lookups require Redis so cached distances can be shared across
+backend instances:
+
+```
+CACHE_BACKEND=redis
+REDIS_URL=redis://localhost:6379
+```
+
+Optional settings:
+
+```
+TRIP_DISTANCE_CACHE_TTL_MS=86400000
+TRIP_DISTANCE_CACHE_NAMESPACE=trip-distance
+```
+
+For local Redis testing:
+
+```
+docker run --name concession-redis -p 6379:6379 redis:7
+```
+
+Or run the backend and Redis together from the backend directory:
+
+```
+docker compose up --build
+```
+
+The backend will be available at `http://localhost:3000`, and Redis will be
+available at `localhost:6379`.
+
+To stop the services:
+
+```
+docker compose down
+```
+
+To clear the persisted Redis cache volume:
+
+```
+docker compose down -v
+```
+
 ## Usage
 
 1. Start the server:

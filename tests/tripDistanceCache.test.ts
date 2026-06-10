@@ -1,12 +1,24 @@
 import assert from "node:assert/strict";
+import { afterEach } from "node:test";
 import { test } from "node:test";
-import { InMemoryTripDistanceCache } from "../src/cache/tripDistCache";
+
+process.env.REDIS_URL = process.env.REDIS_URL ?? "redis://example.test:6379";
+
+import type { TripDistanceCacheStore } from "../src/cache/tripDistCache";
 import {
   buildTripDistanceCacheKey,
   TRIP_DISTANCE_RULESET_VERSION,
 } from "../src/services/tripDistanceCacheKeyService";
 import { TripDistanceLookupService } from "../src/services/tripDistanceLookupService";
 import type { DayGroup, Trip, TripDistanceResult } from "../src/types";
+
+const originalCacheBackend = process.env.CACHE_BACKEND;
+const originalRedisUrl = process.env.REDIS_URL;
+
+afterEach(() => {
+  restoreEnv("CACHE_BACKEND", originalCacheBackend);
+  restoreEnv("REDIS_URL", originalRedisUrl);
+});
 
 test("trip distance cache key normalizes trivial formatting differences", () => {
   const firstKey = buildTripDistanceCacheKey({
@@ -115,9 +127,9 @@ test("version changes invalidate trip distance cache keys", () => {
 
 test("cache hit returns cached result and skips distance calculation", async () => {
   const trip = makeTrip();
-  const cache = new InMemoryTripDistanceCache();
+  const cache = new FakeTripDistanceCacheStore();
   const cachedResult: TripDistanceResult = { distanceKm: 3.4, issues: [] };
-  cache.set(buildTripDistanceCacheKey(trip), cachedResult, 60_000);
+  await cache.set(buildTripDistanceCacheKey(trip), cachedResult, 60_000);
 
   let calculationCount = 0;
   const service = new TripDistanceLookupService(cache, 60_000, async () => {
@@ -134,7 +146,7 @@ test("cache hit returns cached result and skips distance calculation", async () 
 
 test("cache miss calculates, stores, and returns the distance result", async () => {
   const trip = makeTrip();
-  const cache = new InMemoryTripDistanceCache();
+  const cache = new FakeTripDistanceCacheStore();
   const calculatedResult: TripDistanceResult = { distanceKm: 2.7, issues: [] };
   let calculationCount = 0;
   const service = new TripDistanceLookupService(cache, 60_000, async () => {
@@ -147,12 +159,15 @@ test("cache miss calculates, stores, and returns the distance result", async () 
   assert.equal(lookup.cacheHit, false);
   assert.equal(calculationCount, 1);
   assert.deepEqual(lookup.result, calculatedResult);
-  assert.deepEqual(cache.get(buildTripDistanceCacheKey(trip)), calculatedResult);
+  assert.deepEqual(
+    await cache.get(buildTripDistanceCacheKey(trip)),
+    calculatedResult,
+  );
 });
 
 test("cached result equals uncached result", async () => {
   const trip = makeTrip();
-  const cache = new InMemoryTripDistanceCache();
+  const cache = new FakeTripDistanceCacheStore();
   const calculatedResult: TripDistanceResult = { distanceKm: 4.1, issues: [] };
   let calculationCount = 0;
   const service = new TripDistanceLookupService(cache, 60_000, async () => {
@@ -182,7 +197,7 @@ test("distance resolver computes repeated trip signatures once per analysis run"
       endLocation: " kent   ridge ",
     }),
   ]);
-  const cache = new InMemoryTripDistanceCache();
+  const cache = new FakeTripDistanceCacheStore();
   let calculationCount = 0;
   const service = new TripDistanceLookupService(cache, 60_000, async () => {
     calculationCount += 1;
@@ -246,4 +261,42 @@ function makeDayGroups(trips: Trip[]): DayGroup[] {
       totalFare: 0,
     },
   ];
+}
+
+class FakeTripDistanceCacheStore implements TripDistanceCacheStore {
+  private values = new Map<string, TripDistanceResult>();
+
+  async get(key: string): Promise<TripDistanceResult | undefined> {
+    const value = this.values.get(key);
+    if (!value) return undefined;
+
+    return {
+      distanceKm: value.distanceKm,
+      issues: value.issues.map((issue) => ({ ...issue })),
+    };
+  }
+
+  async set(
+    key: string,
+    value: TripDistanceResult,
+    _ttlMs: number,
+  ): Promise<void> {
+    this.values.set(key, {
+      distanceKm: value.distanceKm,
+      issues: value.issues.map((issue) => ({ ...issue })),
+    });
+  }
+
+  async delete(key: string): Promise<void> {
+    this.values.delete(key);
+  }
+}
+
+function restoreEnv(key: string, value: string | undefined): void {
+  if (value === undefined) {
+    delete process.env[key];
+    return;
+  }
+
+  process.env[key] = value;
 }

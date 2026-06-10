@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { after, test } from "node:test";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { closeTripDistanceCache } from "../src/cache/tripDistCache";
 import sql from "../src/db";
 import { concessionFareCalcService } from "../src/services/concessionFareCalculatorService";
 import { pdfParserService } from "../src/services/pdfParserService";
@@ -68,6 +69,7 @@ const commuterType = normalizeCommuterType(process.env.FARE_TEST_COMMUTER_TYPE);
 const toleranceCents = normalizeToleranceCents(process.env.FARE_TEST_TOLERANCE_CENTS);
 
 after(async () => {
+  await closeTripDistanceCache();
   await sql.end({ timeout: 5 });
 });
 
