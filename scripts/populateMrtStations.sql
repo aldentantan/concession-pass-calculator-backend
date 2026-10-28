@@ -63,7 +63,7 @@ INSERT INTO mrt_stations (station_name, station_code) VALUES
 ('Stevens', 'DT10/TE11'),
 ('Rochor', 'DT13'),
 ('Promenade', 'DT15/CC4'),
-('Bayfront', 'DT16/CE1'),
+('Bayfront', 'DT16/CC34'),
 ('Downtown', 'DT17'),
 ('Telok Ayer', 'DT18'),
 ('Fort Canning', 'DT20'),
@@ -105,6 +105,9 @@ INSERT INTO mrt_stations (station_name, station_code) VALUES
 ('Labrador Park', 'CC27'),
 ('Telok Blangah', 'CC28'),
 ('HarbourFront', 'CC29/NE1'),
+('Keppel', 'CC30'),
+('Cantonment', 'CC31'),
+('Prince Edward Road', 'CC32'),
 
 -- NORTH–SOUTH LINE (RED)
 ('Bukit Batok', 'NS2'),
@@ -130,7 +133,7 @@ INSERT INTO mrt_stations (station_name, station_code) VALUES
 ('Dhoby Ghaut', 'NS24/NE6/CC1'),
 ('City Hall', 'NS25/EW13'),
 ('Raffles Place', 'NS26/EW14'),
-('Marina Bay', 'NS27/TE20/CE2'),
+('Marina Bay', 'NS27/TE20/CC33'),
 ('Marina South Pier', 'NS28'),
 
 -- THOMSON–EAST COAST LINE (BROWN)
@@ -201,4 +204,8 @@ INSERT INTO mrt_stations (station_name, station_code) VALUES
 ('Samudera', 'PW4'),
 ('Nibong', 'PW5'),
 ('Sumang', 'PW6'),
-('Soo Teck', 'PW7');
+('Soo Teck', 'PW7')
+
+ON CONFLICT (station_name)
+DO UPDATE SET
+    station_code = EXCLUDED.station_code;

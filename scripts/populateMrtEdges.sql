@@ -107,6 +107,10 @@ SELECT add_bidirectional_edge('Haw Par Villa', 'Pasir Panjang', 1.3);
 SELECT add_bidirectional_edge('Pasir Panjang', 'Labrador Park', 1.4);
 SELECT add_bidirectional_edge('Labrador Park', 'Telok Blangah', 0.8);
 SELECT add_bidirectional_edge('Telok Blangah', 'HarbourFront', 1.5);
+SELECT add_bidirectional_edge('HarbourFront', 'Keppel', 1.2);
+SELECT add_bidirectional_edge('Keppel', 'Cantonment', 0.8);
+SELECT add_bidirectional_edge('Cantonment', 'Prince Edward Road', 1.2);
+SELECT add_bidirectional_edge('Prince Edward Road', 'Marina Bay', 0.9);
 
 -- North South Line
 SELECT add_bidirectional_edge('Jurong East', 'Bukit Batok', 2.1);
