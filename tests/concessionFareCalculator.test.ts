@@ -187,3 +187,34 @@ test('free trip distance is excluded using the selected commuter fare table', as
   assert.equal(studentNonqualifyingDay.journeys[0].totalFare, 0.5);
   assert.equal(adultNonqualifyingDay.journeys[0].totalFare, 1);
 });
+
+test('the direct MRT distance keeps the complete journey in the 8.2 km fare band', async () => {
+  const service = new ConcessionFareCalculatorService({
+    getFaresByCommuterType: async (commuterType) => [
+      {
+        service_type: 'mrt',
+        commuter_type: commuterType,
+        min_distance_km: 0,
+        max_distance_km: 8.2,
+        fare: 1.75,
+      },
+      {
+        service_type: 'mrt',
+        commuter_type: commuterType,
+        min_distance_km: 8.3,
+        max_distance_km: 100,
+        fare: 1.82,
+      },
+    ],
+  });
+  const dayGroup = createDayGroup('Tue', [
+    createTrip({ distance: 7.1 }),
+    createTrip({ type: 'bus', distance: 1.1 }),
+  ]);
+
+  await service.calculateFaresOnConcession([dayGroup], 'adult');
+
+  assert.equal(dayGroup.journeys[0].mrtDistance, 7.1);
+  assert.equal(dayGroup.journeys[0].busDistance, 1.1);
+  assert.equal(dayGroup.journeys[0].totalFare, 1.75);
+});
