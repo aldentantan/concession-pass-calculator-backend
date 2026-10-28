@@ -61,7 +61,7 @@ type FareDiscrepancyReport = {
 };
 
 const backendRoot = path.resolve(__dirname, "..");
-const fixtureRoot = path.resolve(backendRoot, "..");
+const fixtureRoot = path.resolve(backendRoot, "../concession-pass-calculator/docs");
 const outputDir = path.join(backendRoot, "output");
 const reportPath = path.join(outputDir, "fare-discrepancies.json");
 const commuterType = normalizeCommuterType(process.env.FARE_TEST_COMMUTER_TYPE);

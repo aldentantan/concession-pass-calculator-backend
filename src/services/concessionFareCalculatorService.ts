@@ -1,13 +1,56 @@
-import type { CommuterType, DayGroup, FareTable } from '../types';
+import type { CommuterType, DayGroup, FareTable, Trip } from '../types';
 import { FareTableRepository } from '../repositories/fareTableRepository';
+
 interface ConcessionFareResult {
         totalFareWithNewPrices: number;
         totalFareExcludingBus: number;
         totalFareExcludingMrt: number;
     }
 
-class ConcessionFareCalculatorService {
-    private fareTableRepository = new FareTableRepository();
+const NORTHEAST_OFF_PEAK_STATIONS = new Set([
+    'kovan',
+    'buangkok',
+    'hougang',
+    'sengkang',
+    'punggol',
+    'punggol coast',
+    // Sengkang LRT
+    'compassvale',
+    'rumbia',
+    'bakau',
+    'kangkar',
+    'ranggung',
+    'cheng lim',
+    'farmway',
+    'kupang',
+    'thanggam',
+    'fernvale',
+    'layar',
+    'tongkang',
+    'renjong',
+    // Punggol LRT
+    'cove',
+    'meridian',
+    'coral edge',
+    'riviera',
+    'kadaloor',
+    'oasis',
+    'damai',
+    'sam kee',
+    'teck lee',
+    'punggol point',
+    'samudera',
+    'nibong',
+    'sumang',
+    'soo teck',
+]);
+
+const WEEKDAYS = new Set(['mon', 'tue', 'wed', 'thu', 'fri']);
+
+type FareTableSource = Pick<FareTableRepository, 'getFaresByCommuterType'>;
+
+export class ConcessionFareCalculatorService {
+    constructor(private fareTableRepository: FareTableSource = new FareTableRepository()) {}
 
     private calculateFareFromTable(distance: number, fareRows: FareTable[]): number {
         const fareRow = fareRows.find((row) =>
@@ -16,6 +59,35 @@ class ConcessionFareCalculatorService {
         );
 
         return Number(fareRow?.fare || 0);
+    }
+
+    private getTripStartMinutes(timeRange: string): number | null {
+        const startTime = timeRange.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)\s+-/i);
+        if (!startTime) return null;
+
+        const hour = Number(startTime[1]);
+        const minute = Number(startTime[2]);
+        const meridiem = startTime[3].toUpperCase();
+        if (hour < 1 || hour > 12 || minute > 59) return null;
+
+        const hour24 = (hour % 12) + (meridiem === 'PM' ? 12 : 0);
+        return hour24 * 60 + minute;
+    }
+
+    private isNortheastOffPeakTrip(day: string, trip: Trip): boolean {
+        if (trip.type !== 'mrt' || !WEEKDAYS.has(day.trim().slice(0, 3).toLowerCase())) {
+            return false;
+        }
+
+        if (!NORTHEAST_OFF_PEAK_STATIONS.has(trip.startLocation.trim().toLowerCase())) {
+            return false;
+        }
+
+        const startMinutes = this.getTripStartMinutes(trip.time);
+        return startMinutes !== null && (
+            startMinutes < 7 * 60 + 30 ||
+            (startMinutes >= 9 * 60 && startMinutes <= 9 * 60 + 45)
+        );
     }
 
     async calculateFaresOnConcession(dayGroups: DayGroup[], commuterType: CommuterType = 'adult'): Promise<ConcessionFareResult> {
@@ -33,11 +105,17 @@ class ConcessionFareCalculatorService {
             for (const journey of dayGroup.journeys) {
                 let journeyMrtDistance = 0;
                 let journeyBusDistance = 0;
+                let freeMrtDistance = 0;
+                let hasFreeMrtTrip = false;
 
                 // Aggregate distances by type for this journey
                 for (const trip of journey.trips) {
                     if (trip.type === 'mrt') {
                         journeyMrtDistance += trip.distance;
+                        if (!hasFreeMrtTrip && this.isNortheastOffPeakTrip(dayGroup.day, trip)) {
+                            freeMrtDistance = trip.distance;
+                            hasFreeMrtTrip = true;
+                        }
                     } else if (trip.type === 'bus') {
                         journeyBusDistance += trip.distance;
                     }
@@ -49,8 +127,9 @@ class ConcessionFareCalculatorService {
 
                 // Calculate journey-level fares
                 // fareExcludingBus = fare if you had unlimited bus (only pay for MRT)
-                journey.fareExcludingBus = journeyMrtDistance > 0
-                    ? this.calculateFareFromTable(journeyMrtDistance, commuterFareTables)
+                const chargedMrtDistance = Math.max(0, journeyMrtDistance - freeMrtDistance);
+                journey.fareExcludingBus = chargedMrtDistance > 0
+                    ? this.calculateFareFromTable(chargedMrtDistance, commuterFareTables)
                     : 0;
 
                 // fareExcludingMrt = fare if you had unlimited MRT (only pay for bus)
@@ -59,7 +138,7 @@ class ConcessionFareCalculatorService {
                     : 0;
 
                 // Total fare for the journey (with concession pricing)
-                const totalJourneyDistance = journeyMrtDistance + journeyBusDistance;
+                const totalJourneyDistance = chargedMrtDistance + journeyBusDistance;
                 journey.totalFare = totalJourneyDistance > 0
                     ? this.calculateFareFromTable(totalJourneyDistance, commuterFareTables)
                     : 0;
