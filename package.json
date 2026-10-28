@@ -9,7 +9,8 @@
     "build": "tsc",
     "test": "node --test -r ts-node/register tests/*.test.ts",
     "ingest:bus-stops": "npx ts-node scripts/ingestLtaBusStops.ts",
-    "ingest:bus-routes": "npx ts-node scripts/ingestLtaBusRoutes.ts"
+    "ingest:bus-routes": "npx ts-node scripts/ingestLtaBusRoutes.ts",
+    "ingest:mrt-od-distances": "ts-node scripts/generateMrtOriginDestinationDistances.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.89.0",
@@ -28,6 +29,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^1.4.11",
     "@types/node": "^20.10.0",
+    "playwright": "^1.64.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.3.3"

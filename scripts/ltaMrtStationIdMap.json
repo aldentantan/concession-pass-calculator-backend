@@ -1,0 +1,1128 @@
+{
+  "generatedAt": "2026-10-28T17:12:38.145Z",
+  "adultFareType": {
+    "ltaId": "30",
+    "ltaLabel": "Adult"
+  },
+  "stations": [
+    {
+      "ltaId": "44",
+      "ltaOptionValue": "44_44",
+      "ltaLabel": "Admiralty (NS10)",
+      "stationName": "Admiralty"
+    },
+    {
+      "ltaId": "34",
+      "ltaOptionValue": "34_34",
+      "ltaLabel": "Aljunied (EW9)",
+      "stationName": "Aljunied"
+    },
+    {
+      "ltaId": "2",
+      "ltaOptionValue": "2_2",
+      "ltaLabel": "Ang Mo Kio (NS16)",
+      "stationName": "Ang Mo Kio"
+    },
+    {
+      "ltaId": "119",
+      "ltaOptionValue": "119_81",
+      "ltaLabel": "Bakau (SE3)",
+      "stationName": "Bakau"
+    },
+    {
+      "ltaId": "57",
+      "ltaOptionValue": "57_56",
+      "ltaLabel": "Bangkit (BP9)",
+      "stationName": "Bangkit"
+    },
+    {
+      "ltaId": "201",
+      "ltaOptionValue": "201_108",
+      "ltaLabel": "Bartley (CC12)",
+      "stationName": "Bartley"
+    },
+    {
+      "ltaId": "229",
+      "ltaOptionValue": "229_131",
+      "ltaLabel": "Bayfront (CC34 / DT16)",
+      "stationName": "Bayfront"
+    },
+    {
+      "ltaId": "430",
+      "ltaOptionValue": "430_182",
+      "ltaLabel": "Bayshore (TE29)",
+      "stationName": "Bayshore"
+    },
+    {
+      "ltaId": "309",
+      "ltaOptionValue": "309_140",
+      "ltaLabel": "Beauty World (DT5)",
+      "stationName": "Beauty World"
+    },
+    {
+      "ltaId": "38",
+      "ltaOptionValue": "38_38",
+      "ltaLabel": "Bedok (EW5)",
+      "stationName": "Bedok"
+    },
+    {
+      "ltaId": "327",
+      "ltaOptionValue": "327_152",
+      "ltaLabel": "Bedok North (DT29)",
+      "stationName": "Bedok North"
+    },
+    {
+      "ltaId": "328",
+      "ltaOptionValue": "328_151",
+      "ltaLabel": "Bedok Reservoir (DT30)",
+      "stationName": "Bedok Reservoir"
+    },
+    {
+      "ltaId": "319",
+      "ltaOptionValue": "319_159",
+      "ltaLabel": "Bencoolen (DT21)",
+      "stationName": "Bencoolen"
+    },
+    {
+      "ltaId": "321",
+      "ltaOptionValue": "321_157",
+      "ltaLabel": "Bendemeer (DT23)",
+      "stationName": "Bendemeer"
+    },
+    {
+      "ltaId": "3",
+      "ltaOptionValue": "3_3",
+      "ltaLabel": "Bishan (NS17 / CC15)",
+      "stationName": "Bishan"
+    },
+    {
+      "ltaId": "109",
+      "ltaOptionValue": "109_73",
+      "ltaLabel": "Boon Keng (NE9)",
+      "stationName": "Boon Keng"
+    },
+    {
+      "ltaId": "27",
+      "ltaOptionValue": "27_27",
+      "ltaLabel": "Boon Lay (EW27)",
+      "stationName": "Boon Lay"
+    },
+    {
+      "ltaId": "313",
+      "ltaOptionValue": "313_121",
+      "ltaLabel": "Botanic Gardens (CC19 / DT9)",
+      "stationName": "Botanic Gardens"
+    },
+    {
+      "ltaId": "4",
+      "ltaOptionValue": "4_4",
+      "ltaLabel": "Braddell (NS18)",
+      "stationName": "Braddell"
+    },
+    {
+      "ltaId": "215",
+      "ltaOptionValue": "215_111",
+      "ltaLabel": "Bras Basah (CC2)",
+      "stationName": "Bras Basah"
+    },
+    {
+      "ltaId": "407",
+      "ltaOptionValue": "407_167",
+      "ltaLabel": "Bright Hill (TE7)",
+      "stationName": "Bright Hill"
+    },
+    {
+      "ltaId": "103",
+      "ltaOptionValue": "103_67",
+      "ltaLabel": "Buangkok (NE15)",
+      "stationName": "Buangkok"
+    },
+    {
+      "ltaId": "31",
+      "ltaOptionValue": "31_31",
+      "ltaLabel": "Bugis (EW12 / DT14)",
+      "stationName": "Bugis"
+    },
+    {
+      "ltaId": "28",
+      "ltaOptionValue": "28_28",
+      "ltaLabel": "Bukit Batok (NS2)",
+      "stationName": "Bukit Batok"
+    },
+    {
+      "ltaId": "29",
+      "ltaOptionValue": "29_29",
+      "ltaLabel": "Bukit Gombak (NS3)",
+      "stationName": "Bukit Gombak"
+    },
+    {
+      "ltaId": "306",
+      "ltaOptionValue": "306_53",
+      "ltaLabel": "Bukit Panjang (BP6 / DT1)",
+      "stationName": "Bukit Panjang"
+    },
+    {
+      "ltaId": "220",
+      "ltaOptionValue": "220_20",
+      "ltaLabel": "Buona Vista (EW21 / CC22)",
+      "stationName": "Buona Vista"
+    },
+    {
+      "ltaId": "216",
+      "ltaOptionValue": "216_120",
+      "ltaLabel": "Caldecott (CC17 / TE9)",
+      "stationName": "Caldecott"
+    },
+    {
+      "ltaId": "73",
+      "ltaOptionValue": "73_161",
+      "ltaLabel": "Canberra (NS12)",
+      "stationName": "Canberra"
+    },
+    {
+      "ltaId": "232",
+      "ltaOptionValue": "232_186",
+      "ltaLabel": "Cantonment (CC31)",
+      "stationName": "Cantonment"
+    },
+    {
+      "ltaId": "307",
+      "ltaOptionValue": "307_142",
+      "ltaLabel": "Cashew (DT2)",
+      "stationName": "Cashew"
+    },
+    {
+      "ltaId": "65",
+      "ltaOptionValue": "65_64",
+      "ltaLabel": "Changi Airport (CG2)",
+      "stationName": "Changi Airport"
+    },
+    {
+      "ltaId": "122",
+      "ltaOptionValue": "122_84",
+      "ltaLabel": "Cheng Lim (SW1)",
+      "stationName": "Cheng Lim"
+    },
+    {
+      "ltaId": "114",
+      "ltaOptionValue": "114_77",
+      "ltaLabel": "Chinatown (NE4 / DT19)",
+      "stationName": "Chinatown"
+    },
+    {
+      "ltaId": "25",
+      "ltaOptionValue": "25_25",
+      "ltaLabel": "Chinese Garden (EW25)",
+      "stationName": "Chinese Garden"
+    },
+    {
+      "ltaId": "49",
+      "ltaOptionValue": "49_30",
+      "ltaLabel": "Choa Chu Kang (NS4 / BP1)",
+      "stationName": "Choa Chu Kang"
+    },
+    {
+      "ltaId": "11",
+      "ltaOptionValue": "11_11",
+      "ltaLabel": "City Hall (NS25 / EW13)",
+      "stationName": "City Hall"
+    },
+    {
+      "ltaId": "113",
+      "ltaOptionValue": "113_76",
+      "ltaLabel": "Clarke Quay (NE5)",
+      "stationName": "Clarke Quay"
+    },
+    {
+      "ltaId": "21",
+      "ltaOptionValue": "21_21",
+      "ltaLabel": "Clementi (EW23)",
+      "stationName": "Clementi"
+    },
+    {
+      "ltaId": "19",
+      "ltaOptionValue": "19_19",
+      "ltaLabel": "Commonwealth (EW20)",
+      "stationName": "Commonwealth"
+    },
+    {
+      "ltaId": "117",
+      "ltaOptionValue": "117_79",
+      "ltaLabel": "Compassvale (SE1)",
+      "stationName": "Compassvale"
+    },
+    {
+      "ltaId": "132",
+      "ltaOptionValue": "132_94",
+      "ltaLabel": "Coral Edge (PE3)",
+      "stationName": "Coral Edge"
+    },
+    {
+      "ltaId": "130",
+      "ltaOptionValue": "130_92",
+      "ltaLabel": "Cove (PE1)",
+      "stationName": "Cove"
+    },
+    {
+      "ltaId": "209",
+      "ltaOptionValue": "209_117",
+      "ltaLabel": "Dakota (CC8)",
+      "stationName": "Dakota"
+    },
+    {
+      "ltaId": "136",
+      "ltaOptionValue": "136_98",
+      "ltaLabel": "Damai (PE7)",
+      "stationName": "Damai"
+    },
+    {
+      "ltaId": "10",
+      "ltaOptionValue": "10_10",
+      "ltaLabel": "Dhoby Ghaut (NS24 / NE6 / CC1)",
+      "stationName": "Dhoby Ghaut"
+    },
+    {
+      "ltaId": "64",
+      "ltaOptionValue": "64_63",
+      "ltaLabel": "Dover (EW22)",
+      "stationName": "Dover"
+    },
+    {
+      "ltaId": "303",
+      "ltaOptionValue": "303_132",
+      "ltaLabel": "Downtown (DT17)",
+      "stationName": "Downtown"
+    },
+    {
+      "ltaId": "214",
+      "ltaOptionValue": "214_112",
+      "ltaLabel": "Esplanade (CC3)",
+      "stationName": "Esplanade"
+    },
+    {
+      "ltaId": "36",
+      "ltaOptionValue": "36_36",
+      "ltaLabel": "Eunos (EW7)",
+      "stationName": "Eunos"
+    },
+    {
+      "ltaId": "333",
+      "ltaOptionValue": "333_62",
+      "ltaLabel": "Expo (CG1 / DT35)",
+      "stationName": "Expo"
+    },
+    {
+      "ltaId": "58",
+      "ltaOptionValue": "58_57",
+      "ltaLabel": "Fajar (BP10)",
+      "stationName": "Fajar"
+    },
+    {
+      "ltaId": "123",
+      "ltaOptionValue": "123_85",
+      "ltaLabel": "Farmway (SW2)",
+      "stationName": "Farmway"
+    },
+    {
+      "ltaId": "110",
+      "ltaOptionValue": "110_74",
+      "ltaLabel": "Farrer Park (NE8)",
+      "stationName": "Farrer Park"
+    },
+    {
+      "ltaId": "218",
+      "ltaOptionValue": "218_122",
+      "ltaLabel": "Farrer Road (CC20)",
+      "stationName": "Farrer Road"
+    },
+    {
+      "ltaId": "126",
+      "ltaOptionValue": "126_88",
+      "ltaLabel": "Fernvale (SW5)",
+      "stationName": "Fernvale"
+    },
+    {
+      "ltaId": "318",
+      "ltaOptionValue": "318_160",
+      "ltaLabel": "Fort Canning (DT20)",
+      "stationName": "Fort Canning"
+    },
+    {
+      "ltaId": "422",
+      "ltaOptionValue": "422_175",
+      "ltaLabel": "Gardens by the Bay (TE22)",
+      "stationName": "Gardens by the Bay"
+    },
+    {
+      "ltaId": "322",
+      "ltaOptionValue": "322_156",
+      "ltaLabel": "Geylang Bahru (DT24)",
+      "stationName": "Geylang Bahru"
+    },
+    {
+      "ltaId": "415",
+      "ltaOptionValue": "415_171",
+      "ltaLabel": "Great World (TE15)",
+      "stationName": "Great World"
+    },
+    {
+      "ltaId": "69",
+      "ltaOptionValue": "69_143",
+      "ltaLabel": "Gul Circle (EW30)",
+      "stationName": "Gul Circle"
+    },
+    {
+      "ltaId": "227",
+      "ltaOptionValue": "227_78",
+      "ltaLabel": "HarbourFront (NE1 / CC29)",
+      "stationName": "HarbourFront"
+    },
+    {
+      "ltaId": "416",
+      "ltaOptionValue": "416_172",
+      "ltaLabel": "Havelock (TE16)",
+      "stationName": "Havelock"
+    },
+    {
+      "ltaId": "223",
+      "ltaOptionValue": "223_126",
+      "ltaLabel": "Haw Par Villa (CC25)",
+      "stationName": "Haw Par Villa"
+    },
+    {
+      "ltaId": "308",
+      "ltaOptionValue": "308_141",
+      "ltaLabel": "Hillview (DT3)",
+      "stationName": "Hillview"
+    },
+    {
+      "ltaId": "219",
+      "ltaOptionValue": "219_123",
+      "ltaLabel": "Holland Village (CC21)",
+      "stationName": "Holland Village"
+    },
+    {
+      "ltaId": "104",
+      "ltaOptionValue": "104_68",
+      "ltaLabel": "Hougang (NE14)",
+      "stationName": "Hougang"
+    },
+    {
+      "ltaId": "336",
+      "ltaOptionValue": "336_184",
+      "ltaLabel": "Hume (DT4)",
+      "stationName": "Hume"
+    },
+    {
+      "ltaId": "320",
+      "ltaOptionValue": "320_158",
+      "ltaLabel": "Jalan Besar (DT22)",
+      "stationName": "Jalan Besar"
+    },
+    {
+      "ltaId": "60",
+      "ltaOptionValue": "60_59",
+      "ltaLabel": "Jelapang (BP12)",
+      "stationName": "Jelapang"
+    },
+    {
+      "ltaId": "67",
+      "ltaOptionValue": "67_106",
+      "ltaLabel": "Joo Koon (EW29)",
+      "stationName": "Joo Koon"
+    },
+    {
+      "ltaId": "24",
+      "ltaOptionValue": "24_24",
+      "ltaLabel": "Jurong East (NS1 / EW24)",
+      "stationName": "Jurong East"
+    },
+    {
+      "ltaId": "134",
+      "ltaOptionValue": "134_96",
+      "ltaLabel": "Kadaloor (PE5)",
+      "stationName": "Kadaloor"
+    },
+    {
+      "ltaId": "326",
+      "ltaOptionValue": "326_153",
+      "ltaLabel": "Kaki Bukit (DT28)",
+      "stationName": "Kaki Bukit"
+    },
+    {
+      "ltaId": "33",
+      "ltaOptionValue": "33_33",
+      "ltaLabel": "Kallang (EW10)",
+      "stationName": "Kallang"
+    },
+    {
+      "ltaId": "120",
+      "ltaOptionValue": "120_82",
+      "ltaLabel": "Kangkar (SE4)",
+      "stationName": "Kangkar"
+    },
+    {
+      "ltaId": "425",
+      "ltaOptionValue": "425_177",
+      "ltaLabel": "Katong Park (TE24)",
+      "stationName": "Katong Park"
+    },
+    {
+      "ltaId": "51",
+      "ltaOptionValue": "51_50",
+      "ltaLabel": "Keat Hong (BP3)",
+      "stationName": "Keat Hong"
+    },
+    {
+      "ltaId": "37",
+      "ltaOptionValue": "37_37",
+      "ltaLabel": "Kembangan (EW6)",
+      "stationName": "Kembangan"
+    },
+    {
+      "ltaId": "222",
+      "ltaOptionValue": "222_125",
+      "ltaLabel": "Kent Ridge (CC24)",
+      "stationName": "Kent Ridge"
+    },
+    {
+      "ltaId": "231",
+      "ltaOptionValue": "231_185",
+      "ltaLabel": "Keppel (CC30)",
+      "stationName": "Keppel"
+    },
+    {
+      "ltaId": "23",
+      "ltaOptionValue": "23_23",
+      "ltaLabel": "Khatib (NS14)",
+      "stationName": "Khatib"
+    },
+    {
+      "ltaId": "310",
+      "ltaOptionValue": "310_139",
+      "ltaLabel": "King Albert Park (DT6)",
+      "stationName": "King Albert Park"
+    },
+    {
+      "ltaId": "105",
+      "ltaOptionValue": "105_69",
+      "ltaLabel": "Kovan (NE13)",
+      "stationName": "Kovan"
+    },
+    {
+      "ltaId": "47",
+      "ltaOptionValue": "47_47",
+      "ltaLabel": "Kranji (NS7)",
+      "stationName": "Kranji"
+    },
+    {
+      "ltaId": "124",
+      "ltaOptionValue": "124_86",
+      "ltaLabel": "Kupang (SW3)",
+      "stationName": "Kupang"
+    },
+    {
+      "ltaId": "225",
+      "ltaOptionValue": "225_128",
+      "ltaLabel": "Labrador Park (CC27)",
+      "stationName": "Labrador Park"
+    },
+    {
+      "ltaId": "26",
+      "ltaOptionValue": "26_26",
+      "ltaLabel": "Lakeside (EW26)",
+      "stationName": "Lakeside"
+    },
+    {
+      "ltaId": "32",
+      "ltaOptionValue": "32_32",
+      "ltaLabel": "Lavender (EW11)",
+      "stationName": "Lavender"
+    },
+    {
+      "ltaId": "127",
+      "ltaOptionValue": "127_89",
+      "ltaLabel": "Layar (SW6)",
+      "stationName": "Layar"
+    },
+    {
+      "ltaId": "405",
+      "ltaOptionValue": "405_165",
+      "ltaLabel": "Lentor (TE5)",
+      "stationName": "Lentor"
+    },
+    {
+      "ltaId": "111",
+      "ltaOptionValue": "111_75",
+      "ltaLabel": "Little India (NE7 / DT12)",
+      "stationName": "Little India"
+    },
+    {
+      "ltaId": "203",
+      "ltaOptionValue": "203_109",
+      "ltaLabel": "Lorong Chuan (CC14)",
+      "stationName": "Lorong Chuan"
+    },
+    {
+      "ltaId": "207",
+      "ltaOptionValue": "207_118",
+      "ltaLabel": "MacPherson (CC10 / DT26)",
+      "stationName": "MacPherson"
+    },
+    {
+      "ltaId": "228",
+      "ltaOptionValue": "228_13",
+      "ltaLabel": "Marina Bay (NS27 / TE20 / CC33)",
+      "stationName": "Marina Bay"
+    },
+    {
+      "ltaId": "68",
+      "ltaOptionValue": "68_134",
+      "ltaLabel": "Marina South Pier (NS28)",
+      "stationName": "Marina South Pier"
+    },
+    {
+      "ltaId": "427",
+      "ltaOptionValue": "427_179",
+      "ltaLabel": "Marine Parade (TE26)",
+      "stationName": "Marine Parade"
+    },
+    {
+      "ltaId": "428",
+      "ltaOptionValue": "428_180",
+      "ltaLabel": "Marine Terrace (TE27)",
+      "stationName": "Marine Terrace"
+    },
+    {
+      "ltaId": "46",
+      "ltaOptionValue": "46_46",
+      "ltaLabel": "Marsiling (NS8)",
+      "stationName": "Marsiling"
+    },
+    {
+      "ltaId": "205",
+      "ltaOptionValue": "205_110",
+      "ltaLabel": "Marymount (CC16)",
+      "stationName": "Marymount"
+    },
+    {
+      "ltaId": "323",
+      "ltaOptionValue": "323_155",
+      "ltaLabel": "Mattar (DT25)",
+      "stationName": "Mattar"
+    },
+    {
+      "ltaId": "418",
+      "ltaOptionValue": "418_173",
+      "ltaLabel": "Maxwell (TE18)",
+      "stationName": "Maxwell"
+    },
+    {
+      "ltaId": "406",
+      "ltaOptionValue": "406_166",
+      "ltaLabel": "Mayflower (TE6)",
+      "stationName": "Mayflower"
+    },
+    {
+      "ltaId": "131",
+      "ltaOptionValue": "131_93",
+      "ltaLabel": "Meridian (PE2)",
+      "stationName": "Meridian"
+    },
+    {
+      "ltaId": "210",
+      "ltaOptionValue": "210_116",
+      "ltaLabel": "Mountbatten (CC7)",
+      "stationName": "Mountbatten"
+    },
+    {
+      "ltaId": "412",
+      "ltaOptionValue": "412_169",
+      "ltaLabel": "Napier (TE12)",
+      "stationName": "Napier"
+    },
+    {
+      "ltaId": "315",
+      "ltaOptionValue": "315_7",
+      "ltaLabel": "Newton (NS21 / DT11)",
+      "stationName": "Newton"
+    },
+    {
+      "ltaId": "141",
+      "ltaOptionValue": "141_103",
+      "ltaLabel": "Nibong (PW5)",
+      "stationName": "Nibong"
+    },
+    {
+      "ltaId": "212",
+      "ltaOptionValue": "212_114",
+      "ltaLabel": "Nicoll Highway (CC5)",
+      "stationName": "Nicoll Highway"
+    },
+    {
+      "ltaId": "6",
+      "ltaOptionValue": "6_6",
+      "ltaLabel": "Novena (NS20)",
+      "stationName": "Novena"
+    },
+    {
+      "ltaId": "135",
+      "ltaOptionValue": "135_97",
+      "ltaLabel": "Oasis (PE6)",
+      "stationName": "Oasis"
+    },
+    {
+      "ltaId": "221",
+      "ltaOptionValue": "221_124",
+      "ltaLabel": "one-north (CC23)",
+      "stationName": "one-north"
+    },
+    {
+      "ltaId": "8",
+      "ltaOptionValue": "8_8",
+      "ltaLabel": "Orchard (TE14 / NS22)",
+      "stationName": "Orchard"
+    },
+    {
+      "ltaId": "413",
+      "ltaOptionValue": "413_170",
+      "ltaLabel": "Orchard Boulevard (TE13)",
+      "stationName": "Orchard Boulevard"
+    },
+    {
+      "ltaId": "15",
+      "ltaOptionValue": "15_15",
+      "ltaLabel": "Outram Park (EW16 / NE3 /TE17)",
+      "stationName": "Outram Park"
+    },
+    {
+      "ltaId": "224",
+      "ltaOptionValue": "224_127",
+      "ltaLabel": "Pasir Panjang (CC26)",
+      "stationName": "Pasir Panjang"
+    },
+    {
+      "ltaId": "42",
+      "ltaOptionValue": "42_42",
+      "ltaLabel": "Pasir Ris (EW1)",
+      "stationName": "Pasir Ris"
+    },
+    {
+      "ltaId": "35",
+      "ltaOptionValue": "35_35",
+      "ltaLabel": "Paya Lebar (EW8 / CC9)",
+      "stationName": "Paya Lebar"
+    },
+    {
+      "ltaId": "56",
+      "ltaOptionValue": "56_55",
+      "ltaLabel": "Pending (BP8)",
+      "stationName": "Pending"
+    },
+    {
+      "ltaId": "55",
+      "ltaOptionValue": "55_54",
+      "ltaLabel": "Petir (BP7)",
+      "stationName": "Petir"
+    },
+    {
+      "ltaId": "53",
+      "ltaOptionValue": "53_52",
+      "ltaLabel": "Phoenix (BP5)",
+      "stationName": "Phoenix"
+    },
+    {
+      "ltaId": "66",
+      "ltaOptionValue": "66_107",
+      "ltaLabel": "Pioneer (EW28)",
+      "stationName": "Pioneer"
+    },
+    {
+      "ltaId": "108",
+      "ltaOptionValue": "108_72",
+      "ltaLabel": "Potong Pasir (NE10)",
+      "stationName": "Potong Pasir"
+    },
+    {
+      "ltaId": "233",
+      "ltaOptionValue": "233_187",
+      "ltaLabel": "Prince Edward Road (CC32)",
+      "stationName": "Prince Edward Road"
+    },
+    {
+      "ltaId": "213",
+      "ltaOptionValue": "213_113",
+      "ltaLabel": "Promenade (CC4 / DT15)",
+      "stationName": "Promenade"
+    },
+    {
+      "ltaId": "101",
+      "ltaOptionValue": "101_65",
+      "ltaLabel": "Punggol (NE17 / PTC)",
+      "stationName": "Punggol"
+    },
+    {
+      "ltaId": "100",
+      "ltaOptionValue": "100_183",
+      "ltaLabel": "Punggol Coast (NE18)",
+      "stationName": "Punggol Coast"
+    },
+    {
+      "ltaId": "139",
+      "ltaOptionValue": "139_101",
+      "ltaLabel": "Punggol Point (PW3)",
+      "stationName": "Punggol Point"
+    },
+    {
+      "ltaId": "18",
+      "ltaOptionValue": "18_18",
+      "ltaLabel": "Queenstown (EW19)",
+      "stationName": "Queenstown"
+    },
+    {
+      "ltaId": "12",
+      "ltaOptionValue": "12_12",
+      "ltaLabel": "Raffles Place (NS26 / EW14)",
+      "stationName": "Raffles Place"
+    },
+    {
+      "ltaId": "121",
+      "ltaOptionValue": "121_83",
+      "ltaLabel": "Ranggung (SE5)",
+      "stationName": "Ranggung"
+    },
+    {
+      "ltaId": "17",
+      "ltaOptionValue": "17_17",
+      "ltaLabel": "Redhill (EW18)",
+      "stationName": "Redhill"
+    },
+    {
+      "ltaId": "129",
+      "ltaOptionValue": "129_91",
+      "ltaLabel": "Renjong (SW8)",
+      "stationName": "Renjong"
+    },
+    {
+      "ltaId": "133",
+      "ltaOptionValue": "133_95",
+      "ltaLabel": "Riviera (PE4)",
+      "stationName": "Riviera"
+    },
+    {
+      "ltaId": "317",
+      "ltaOptionValue": "317_135",
+      "ltaLabel": "Rochor (DT13)",
+      "stationName": "Rochor"
+    },
+    {
+      "ltaId": "118",
+      "ltaOptionValue": "118_80",
+      "ltaLabel": "Rumbia (SE2)",
+      "stationName": "Rumbia"
+    },
+    {
+      "ltaId": "137",
+      "ltaOptionValue": "137_99",
+      "ltaLabel": "Sam Kee (PW1)",
+      "stationName": "Sam Kee"
+    },
+    {
+      "ltaId": "140",
+      "ltaOptionValue": "140_102",
+      "ltaLabel": "Samudera (PW4)",
+      "stationName": "Samudera"
+    },
+    {
+      "ltaId": "59",
+      "ltaOptionValue": "59_58",
+      "ltaLabel": "Segar (BP11)",
+      "stationName": "Segar"
+    },
+    {
+      "ltaId": "43",
+      "ltaOptionValue": "43_43",
+      "ltaLabel": "Sembawang (NS11)",
+      "stationName": "Sembawang"
+    },
+    {
+      "ltaId": "102",
+      "ltaOptionValue": "102_66",
+      "ltaLabel": "Sengkang (NE16 / STC)",
+      "stationName": "Sengkang"
+    },
+    {
+      "ltaId": "61",
+      "ltaOptionValue": "61_60",
+      "ltaLabel": "Senja (BP13)",
+      "stationName": "Senja"
+    },
+    {
+      "ltaId": "106",
+      "ltaOptionValue": "106_70",
+      "ltaLabel": "Serangoon (NE12 / CC13)",
+      "stationName": "Serangoon"
+    },
+    {
+      "ltaId": "419",
+      "ltaOptionValue": "419_174",
+      "ltaLabel": "Shenton Way (TE19)",
+      "stationName": "Shenton Way"
+    },
+    {
+      "ltaId": "429",
+      "ltaOptionValue": "429_181",
+      "ltaLabel": "Siglap (TE28)",
+      "stationName": "Siglap"
+    },
+    {
+      "ltaId": "40",
+      "ltaOptionValue": "40_40",
+      "ltaLabel": "Simei (EW3)",
+      "stationName": "Simei"
+    },
+    {
+      "ltaId": "311",
+      "ltaOptionValue": "311_138",
+      "ltaLabel": "Sixth Avenue (DT7)",
+      "stationName": "Sixth Avenue"
+    },
+    {
+      "ltaId": "9",
+      "ltaOptionValue": "9_9",
+      "ltaLabel": "Somerset (NS23)",
+      "stationName": "Somerset"
+    },
+    {
+      "ltaId": "143",
+      "ltaOptionValue": "143_105",
+      "ltaLabel": "Soo Teck (PW7)",
+      "stationName": "Soo Teck"
+    },
+    {
+      "ltaId": "50",
+      "ltaOptionValue": "50_49",
+      "ltaLabel": "South View (BP2)",
+      "stationName": "South View"
+    },
+    {
+      "ltaId": "404",
+      "ltaOptionValue": "404_164",
+      "ltaLabel": "Springleaf (TE4)",
+      "stationName": "Springleaf"
+    },
+    {
+      "ltaId": "211",
+      "ltaOptionValue": "211_115",
+      "ltaLabel": "Stadium (CC6)",
+      "stationName": "Stadium"
+    },
+    {
+      "ltaId": "314",
+      "ltaOptionValue": "314_136",
+      "ltaLabel": "Stevens (DT10 / TE11)",
+      "stationName": "Stevens"
+    },
+    {
+      "ltaId": "142",
+      "ltaOptionValue": "142_104",
+      "ltaLabel": "Sumang (PW6)",
+      "stationName": "Sumang"
+    },
+    {
+      "ltaId": "206",
+      "ltaOptionValue": "206_119",
+      "ltaLabel": "Tai Seng (CC11)",
+      "stationName": "Tai Seng"
+    },
+    {
+      "ltaId": "330",
+      "ltaOptionValue": "330_41",
+      "ltaLabel": "Tampines (EW2 / DT32)",
+      "stationName": "Tampines"
+    },
+    {
+      "ltaId": "331",
+      "ltaOptionValue": "331_148",
+      "ltaLabel": "Tampines East (DT33)",
+      "stationName": "Tampines East"
+    },
+    {
+      "ltaId": "329",
+      "ltaOptionValue": "329_150",
+      "ltaLabel": "Tampines West (DT31)",
+      "stationName": "Tampines West"
+    },
+    {
+      "ltaId": "312",
+      "ltaOptionValue": "312_137",
+      "ltaLabel": "Tan Kah Kee (DT8)",
+      "stationName": "Tan Kah Kee"
+    },
+    {
+      "ltaId": "39",
+      "ltaOptionValue": "39_39",
+      "ltaLabel": "Tanah Merah (EW4)",
+      "stationName": "Tanah Merah"
+    },
+    {
+      "ltaId": "426",
+      "ltaOptionValue": "426_178",
+      "ltaLabel": "Tanjong Katong (TE25)",
+      "stationName": "Tanjong Katong"
+    },
+    {
+      "ltaId": "14",
+      "ltaOptionValue": "14_14",
+      "ltaLabel": "Tanjong Pagar (EW15)",
+      "stationName": "Tanjong Pagar"
+    },
+    {
+      "ltaId": "424",
+      "ltaOptionValue": "424_176",
+      "ltaLabel": "Tanjong Rhu (TE23)",
+      "stationName": "Tanjong Rhu"
+    },
+    {
+      "ltaId": "138",
+      "ltaOptionValue": "138_100",
+      "ltaLabel": "Teck Lee (PW2)",
+      "stationName": "Teck Lee"
+    },
+    {
+      "ltaId": "52",
+      "ltaOptionValue": "52_51",
+      "ltaLabel": "Teck Whye (BP4)",
+      "stationName": "Teck Whye"
+    },
+    {
+      "ltaId": "304",
+      "ltaOptionValue": "304_133",
+      "ltaLabel": "Telok Ayer (DT18)",
+      "stationName": "Telok Ayer"
+    },
+    {
+      "ltaId": "226",
+      "ltaOptionValue": "226_129",
+      "ltaLabel": "Telok Blangah (CC28)",
+      "stationName": "Telok Blangah"
+    },
+    {
+      "ltaId": "125",
+      "ltaOptionValue": "125_87",
+      "ltaLabel": "Thanggam (SW4)",
+      "stationName": "Thanggam"
+    },
+    {
+      "ltaId": "16",
+      "ltaOptionValue": "16_16",
+      "ltaLabel": "Tiong Bahru (EW17)",
+      "stationName": "Tiong Bahru"
+    },
+    {
+      "ltaId": "5",
+      "ltaOptionValue": "5_5",
+      "ltaLabel": "Toa Payoh (NS19)",
+      "stationName": "Toa Payoh"
+    },
+    {
+      "ltaId": "128",
+      "ltaOptionValue": "128_90",
+      "ltaLabel": "Tongkang (SW7)",
+      "stationName": "Tongkang"
+    },
+    {
+      "ltaId": "70",
+      "ltaOptionValue": "70_144",
+      "ltaLabel": "Tuas Crescent (EW31)",
+      "stationName": "Tuas Crescent"
+    },
+    {
+      "ltaId": "72",
+      "ltaOptionValue": "72_146",
+      "ltaLabel": "Tuas Link (EW33)",
+      "stationName": "Tuas Link"
+    },
+    {
+      "ltaId": "71",
+      "ltaOptionValue": "71_145",
+      "ltaLabel": "Tuas West Road (EW32)",
+      "stationName": "Tuas West Road"
+    },
+    {
+      "ltaId": "325",
+      "ltaOptionValue": "325_154",
+      "ltaLabel": "Ubi (DT27)",
+      "stationName": "Ubi"
+    },
+    {
+      "ltaId": "332",
+      "ltaOptionValue": "332_147",
+      "ltaLabel": "Upper Changi (DT34)",
+      "stationName": "Upper Changi"
+    },
+    {
+      "ltaId": "408",
+      "ltaOptionValue": "408_168",
+      "ltaLabel": "Upper Thomson (TE8)",
+      "stationName": "Upper Thomson"
+    },
+    {
+      "ltaId": "402",
+      "ltaOptionValue": "402_45",
+      "ltaLabel": "Woodlands (NS9 / TE2)",
+      "stationName": "Woodlands"
+    },
+    {
+      "ltaId": "401",
+      "ltaOptionValue": "401_162",
+      "ltaLabel": "Woodlands North (TE1)",
+      "stationName": "Woodlands North"
+    },
+    {
+      "ltaId": "403",
+      "ltaOptionValue": "403_163",
+      "ltaLabel": "Woodlands South (TE3)",
+      "stationName": "Woodlands South"
+    },
+    {
+      "ltaId": "107",
+      "ltaOptionValue": "107_71",
+      "ltaLabel": "Woodleigh (NE11)",
+      "stationName": "Woodleigh"
+    },
+    {
+      "ltaId": "48",
+      "ltaOptionValue": "48_48",
+      "ltaLabel": "Yew Tee (NS5)",
+      "stationName": "Yew Tee"
+    },
+    {
+      "ltaId": "1",
+      "ltaOptionValue": "1_1",
+      "ltaLabel": "Yio Chu Kang (NS15)",
+      "stationName": "Yio Chu Kang"
+    },
+    {
+      "ltaId": "22",
+      "ltaOptionValue": "22_22",
+      "ltaLabel": "Yishun (NS13)",
+      "stationName": "Yishun"
+    }
+  ],
+  "excludedStations": [
+    {
+      "stationName": "Xilin",
+      "reason": "Local station \"Xilin\" has no LTA station id mapping"
+    },
+    {
+      "stationName": "Bedok South",
+      "reason": "Local station \"Bedok South\" has no LTA station id mapping"
+    },
+    {
+      "stationName": "Sungei Bedok",
+      "reason": "Local station \"Sungei Bedok\" has no LTA station id mapping"
+    }
+  ],
+  "errors": []
+}

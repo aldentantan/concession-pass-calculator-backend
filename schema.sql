@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS mrt_stations (
 CREATE INDEX idx_mrt_stations_name ON mrt_stations (LOWER(station_name));
 CREATE INDEX idx_mrt_stations_code ON mrt_stations (station_code);
 
--- Adjacent list of edges between MRT stations weighted graph
+-- Direct, directed origin-to-destination MRT/LRT distances from the LTA calculator
 CREATE TABLE mrt_edges (
   id SERIAL PRIMARY KEY,
   from_station_id INT NOT NULL REFERENCES mrt_stations(id) ON DELETE CASCADE,
