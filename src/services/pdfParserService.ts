@@ -144,9 +144,9 @@ class PdfParserService {
     const dayPattern = /^\((\w{3})\)$/;
     const journeyRoutePattern = /^(.+?)\s+-\s+(.+?)$/; // Journey summary line: "START - END"
     const busTripPattern =
-      /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Bus\s+(\d+[A-Z]*)\s+(.+?)\s+-\s+(.+?)(?:\s+\$\s*([\d.]+))?$/i;
+      /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+-\s+(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Bus\s+(\d+[A-Z]*)\s+(.+?)\s+-\s+(.+?)(?:\s+\$\s*([\d.]+))?$/i;
     const mrtTripPattern =
-      /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Train\s+(.+?)\s+-\s+(.+?)(?:\s+\$\s*([\d.]+))?$/i;
+      /^(\d{1,2}:\d{2}\s+(?:AM|PM))\s+-\s+(\d{1,2}:\d{2}\s+(?:AM|PM))\s+Train\s+(.+?)\s+-\s+(.+?)(?:\s+\$\s*([\d.]+))?$/i;
 
     let currentDate = "";
     let currentDay = "";
@@ -260,19 +260,19 @@ class PdfParserService {
         continue;
       }
 
-      // Pattern for Bus trips: "HH:MM AM/PM Bus [NUMBER] [START] - [END] $ [FARE]"
+      // Pattern for Bus trips: "HH:MM AM/PM - HH:MM AM/PM Bus [NUMBER] [START] - [END] $ [FARE]"
       const busMatch = line.match(busTripPattern);
       if (busMatch) {
-        const parsedBusStart = this.restoreProtectedStopNames(busMatch[3].trim());
-        const parsedBusEnd = this.restoreProtectedStopNames(busMatch[4].trim());
+        const parsedBusStart = this.restoreProtectedStopNames(busMatch[4].trim());
+        const parsedBusEnd = this.restoreProtectedStopNames(busMatch[5].trim());
 
         const trip: Trip = {
-          time: busMatch[1],
+          time: `${busMatch[1]} - ${busMatch[2]}`,
           type: "bus",
-          busService: busMatch[2],
+          busService: busMatch[3],
           startLocation: parsedBusStart,
           endLocation: parsedBusEnd,
-          fare: parseFloat(busMatch[5] || "0"),
+          fare: parseFloat(busMatch[6] || "0"),
           distance: 0,
         };
 
@@ -285,7 +285,7 @@ class PdfParserService {
 
         const { distanceKm: busDistance, issues: busTripIssues } =
           await busTripDistanceService.calculateBusTripDistance(
-            busMatch[2], // Bus service number
+            busMatch[3], // Bus service number
             parsedBusStart, // Source bus stop name
             parsedBusEnd, // Destination bus stop name
           );
@@ -311,22 +311,22 @@ class PdfParserService {
         }
       }
 
-      // Pattern for Train/MRT trips: "HH:MM AM/PM Train [START] - [END] $ [FARE]"
+      // Pattern for Train/MRT trips: "HH:MM AM/PM - HH:MM AM/PM Train [START] - [END] $ [FARE]"
       const mrtMatch = line.match(mrtTripPattern);
       if (mrtMatch) {
         const cleanedStartStation = this.cleanStationName(
-          this.restoreProtectedStopNames(mrtMatch[2].trim()),
+          this.restoreProtectedStopNames(mrtMatch[3].trim()),
         );
         const cleanedEndStation = this.cleanStationName(
-          this.restoreProtectedStopNames(mrtMatch[3].trim()),
+          this.restoreProtectedStopNames(mrtMatch[4].trim()),
         );
 
         const trip: Trip = {
-          time: mrtMatch[1],
+          time: `${mrtMatch[1]} - ${mrtMatch[2]}`,
           type: "mrt",
           startLocation: cleanedStartStation,
           endLocation: cleanedEndStation,
-          fare: parseFloat(mrtMatch[4] || "0"),
+          fare: parseFloat(mrtMatch[5] || "0"),
           distance: 0,
         };
 
