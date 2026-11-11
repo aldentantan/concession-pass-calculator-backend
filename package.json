@@ -8,8 +8,7 @@
     "start": "node dist/index.js",
     "build": "tsc",
     "test": "node --test -r ts-node/register tests/*.test.ts",
-    "ingest:bus-stops": "npx ts-node scripts/ingestLtaBusStops.ts",
-    "ingest:bus-routes": "npx ts-node scripts/ingestLtaBusRoutes.ts",
+    "ingest:bus-data": "ts-node scripts/refreshLtaBusData.ts",
     "ingest:mrt-od-distances": "ts-node scripts/generateMrtOriginDestinationDistances.ts"
   },
   "dependencies": {

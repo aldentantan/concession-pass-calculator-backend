@@ -41,6 +41,17 @@ CREATE TABLE IF NOT EXISTS lta_bus_routes (
 
 CREATE INDEX idx_lta_bus_routes_lookup ON lta_bus_routes (bus_service_no, bus_stop_code);
 
+-- One row per successful refresh of lta_bus_stops and lta_bus_routes (scripts/refreshLtaBusData.ts)
+CREATE TABLE IF NOT EXISTS lta_bus_data_refreshes (
+    id SERIAL PRIMARY KEY,
+    refreshed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    bus_stop_count INT NOT NULL,
+    bus_route_count INT NOT NULL,
+    warnings JSONB NOT NULL DEFAULT '[]'::jsonb  -- LTA data quirks loaded as-is, e.g. distances going backwards
+);
+
+ALTER TABLE lta_bus_data_refreshes ENABLE ROW LEVEL SECURITY;
+
 CREATE TABLE IF NOT EXISTS bus_trip_distance_cache (
     id SERIAL PRIMARY KEY,
     bus_service_no VARCHAR(50) NOT NULL,
