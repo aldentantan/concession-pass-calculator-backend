@@ -38,7 +38,8 @@ test("SimplyGo statements with start and end trip times parse all trips and fare
     const trips = journeys.flatMap((journey) => journey.trips);
 
     assert.equal(dayGroups.length, 21);
-    assert.equal(journeys.length, 45);
+    // 45 statement journeys; two bus-to-train transfers listed separately (14 and 22 Sep) are linked into one journey each.
+    assert.equal(journeys.length, 43);
     assert.equal(trips.length, 74);
     assert.equal(
       Math.round(dayGroups.reduce((total, dayGroup) => total + dayGroup.totalFare, 0) * 100) / 100,

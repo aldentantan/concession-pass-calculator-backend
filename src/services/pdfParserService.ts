@@ -3,6 +3,7 @@ import multer from "multer";
 import { PDFParse } from "pdf-parse";
 import { busTripDistanceService } from "../services/busTripDistanceService";
 import { mrtTripDistanceService } from "../services/mrtTripDistanceService";
+import { linkTransferJourneys } from "./journeyTransferService";
 import type { DayGroup, Trip } from "../types";
 
 const monthMapping: { [key: string]: string } = {
@@ -154,6 +155,14 @@ class PdfParserService {
 
     for (let i = 0; i < lines.length; i++) {
       const line = this.protectKnownHyphenatedStopNames(lines[i]);
+
+      // Each page header ends with "STATEMENT GENERATED ON" and the print date on the next line.
+      // Skip both so the print date is not treated as a journey date, which would cut a journey continuing onto the next page.
+      if (/^STATEMENT GENERATED ON$/i.test(line)) {
+        i += 1;
+        continue;
+      }
+
             // Check if this is any date line (from any month)
       const anyDateMatch = line.match(anyDatePattern);
       if (anyDateMatch) {
@@ -369,7 +378,8 @@ class PdfParserService {
       dayGroup.journeys.reverse();
     });
 
-    return dayGroups;
+    // Link statement journeys that LTA's transfer rules treat as one journey (e.g. a transfer SimplyGo lists separately)
+    return linkTransferJourneys(dayGroups);
   }
 }
 
