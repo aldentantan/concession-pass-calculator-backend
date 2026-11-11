@@ -41,6 +41,17 @@ CREATE TABLE IF NOT EXISTS lta_bus_routes (
 
 CREATE INDEX idx_lta_bus_routes_lookup ON lta_bus_routes (bus_service_no, bus_stop_code);
 
+-- One row per successful refresh of lta_bus_stops and lta_bus_routes (scripts/refreshLtaBusData.ts)
+CREATE TABLE IF NOT EXISTS lta_bus_data_refreshes (
+    id SERIAL PRIMARY KEY,
+    refreshed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    bus_stop_count INT NOT NULL,
+    bus_route_count INT NOT NULL,
+    warnings JSONB NOT NULL DEFAULT '[]'::jsonb  -- LTA data quirks loaded as-is, e.g. distances going backwards
+);
+
+ALTER TABLE lta_bus_data_refreshes ENABLE ROW LEVEL SECURITY;
+
 CREATE TABLE IF NOT EXISTS bus_trip_distance_cache (
     id SERIAL PRIMARY KEY,
     bus_service_no VARCHAR(50) NOT NULL,
@@ -63,7 +74,7 @@ CREATE TABLE IF NOT EXISTS mrt_stations (
 CREATE INDEX idx_mrt_stations_name ON mrt_stations (LOWER(station_name));
 CREATE INDEX idx_mrt_stations_code ON mrt_stations (station_code);
 
--- Adjacent list of edges between MRT stations weighted graph
+-- Direct, directed origin-to-destination MRT/LRT distances from the LTA calculator
 CREATE TABLE mrt_edges (
   id SERIAL PRIMARY KEY,
   from_station_id INT NOT NULL REFERENCES mrt_stations(id) ON DELETE CASCADE,

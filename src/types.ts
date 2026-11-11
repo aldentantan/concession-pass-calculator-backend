@@ -68,9 +68,9 @@ export interface FareTable {
 export type CommuterType = 'adult' | 'student';
 
 export interface TripIssue {
-  code: 'BUS_STOP_NOT_FOUND' | 'MRT_STATION_NOT_FOUND';
+  code: 'BUS_STOP_NOT_FOUND' | 'MRT_STATION_NOT_FOUND' | 'INVALID_TRANSFER';
   message: string;
   tripIndex?: number;
   busService?: string;
-  unknownStopName: string;
+  unknownStopName?: string; // Set for BUS_STOP_NOT_FOUND and MRT_STATION_NOT_FOUND
 }
