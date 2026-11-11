@@ -18,15 +18,16 @@ export class MrtRepository {
 
   /**
    * Retrieves the MRT station row ID given the station name.
+   * Matches the full name exactly, ignoring case, so "Orchard" never resolves to "Orchard Boulevard".
    *
    * @param station_name The MRT station name
-   * @returns The row ID of the MRT station in the mrt_stations table
+   * @returns The row ID of the MRT station in the mrt_stations table, or null if no station has that exact name
    */
   async getStationIdByName(station_name: string): Promise<number | null> {
     const result = await sql<{ id: number }[]>`
             SELECT id
             FROM mrt_stations
-            WHERE UPPER(station_name) LIKE UPPER(${`%${station_name}%`})
+            WHERE LOWER(station_name) = LOWER(${station_name})
         `;
     return result.length > 0 ? result[0].id : null;
   }
