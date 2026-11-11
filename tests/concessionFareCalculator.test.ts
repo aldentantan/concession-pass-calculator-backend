@@ -218,3 +218,27 @@ test('the direct MRT distance keeps the complete journey in the 8.2 km fare band
   assert.equal(dayGroup.journeys[0].busDistance, 1.1);
   assert.equal(dayGroup.journeys[0].totalFare, 1.75);
 });
+
+test('summed distances use the matching fare band despite floating-point error', async () => {
+  // In JavaScript 7.1 + 1.2 === 8.299999999999999, which falls between the 8.2 and 8.3 km bands.
+  const service = new ConcessionFareCalculatorService({
+    getFaresByCommuterType: async (commuterType) => [
+      { service_type: 'basic', commuter_type: commuterType, min_distance_km: 0, max_distance_km: 3.2, fare: 1.28 },
+      { service_type: 'basic', commuter_type: commuterType, min_distance_km: 6.3, max_distance_km: 7.2, fare: 1.68 },
+      { service_type: 'basic', commuter_type: commuterType, min_distance_km: 7.3, max_distance_km: 8.2, fare: 1.75 },
+      { service_type: 'basic', commuter_type: commuterType, min_distance_km: 8.3, max_distance_km: 9.2, fare: 1.82 },
+    ],
+  });
+  // Bus 146 Aljunied CC -> Kovan, then Kovan -> Punggol Coast outside the off-peak window (SimplyGo Sep 2026 statement).
+  const dayGroup = createDayGroup('Tue', [
+    createTrip({ type: 'bus', time: '08:32 AM - 08:36 AM', startLocation: 'Aljunied CC', endLocation: 'Kovan Stn Exit C', distance: 1.2 }),
+    createTrip({ time: '08:37 AM - 08:52 AM', startLocation: 'Kovan', endLocation: 'Punggol Coast', distance: 7.1 }),
+  ]);
+
+  await service.calculateFaresOnConcession([dayGroup], 'adult');
+
+  const journey = dayGroup.journeys[0];
+  assert.equal(journey.totalFare, 1.82);
+  assert.equal(journey.fareExcludingBus, 1.68);
+  assert.equal(journey.fareExcludingMrt, 1.28);
+});

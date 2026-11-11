@@ -53,9 +53,12 @@ export class ConcessionFareCalculatorService {
     constructor(private fareTableRepository: FareTableSource = new FareTableRepository()) {}
 
     private calculateFareFromTable(distance: number, fareRows: FareTable[]): number {
+        // Trip distances are in 0.1 km units, but summing them adds floating-point error
+        // (7.1 + 1.2 === 8.299999999999999), which would fall between the 8.2 and 8.3 km bands.
+        const roundedDistance = Math.round(distance * 10) / 10;
         const fareRow = fareRows.find((row) =>
-            distance >= Number(row.min_distance_km) &&
-            distance <= Number(row.max_distance_km)
+            roundedDistance >= Number(row.min_distance_km) &&
+            roundedDistance <= Number(row.max_distance_km)
         );
 
         return Number(fareRow?.fare || 0);
