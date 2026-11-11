@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   buildOrderedOriginDestinationPairs,
+  findAsymmetricDistancePairs,
   generateMrtEdgesSql,
   mapLtaStationOptions,
   parseLtaDistanceKm,
@@ -66,6 +67,22 @@ test('all ordered station pairs are generated once, excluding same-station pairs
     pairs.map(({ from, to }) => `${from.stationName}->${to.stationName}`),
     ['Alpha->Beta', 'Alpha->Gamma', 'Beta->Alpha', 'Beta->Gamma', 'Gamma->Alpha', 'Gamma->Beta'],
   );
+});
+
+test('station pairs whose two directions differ by any amount are flagged once', () => {
+  const pairs = findAsymmetricDistancePairs([
+    { fromStationName: 'Hougang', toStationName: 'Somerset', distanceKm: 24.6 },
+    { fromStationName: 'Somerset', toStationName: 'Hougang', distanceKm: 10.7 },
+    { fromStationName: 'Riviera', toStationName: 'Samudera', distanceKm: 4.6 },
+    { fromStationName: 'Samudera', toStationName: 'Riviera', distanceKm: 4.7 },
+    { fromStationName: 'Kovan', toStationName: 'Hougang', distanceKm: 1.3 },
+    { fromStationName: 'Hougang', toStationName: 'Kovan', distanceKm: 1.3 },
+  ]);
+
+  assert.deepEqual(pairs, [
+    { stationA: 'Hougang', stationB: 'Somerset', distanceAToBKm: 24.6, distanceBToAKm: 10.7 },
+    { stationA: 'Riviera', stationB: 'Samudera', distanceAToBKm: 4.6, distanceBToAKm: 4.7 },
+  ]);
 });
 
 test('station seed parsing and SQL generation use local station names for each directed row', () => {

@@ -4509,7 +4509,6 @@
 {"fromStationName":"Bukit Gombak","toStationName":"Paya Lebar","distanceKm":23.5,"fromLtaId":"29","toLtaId":"35","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Bukit Gombak","toStationName":"Pending","distanceKm":7.2,"fromLtaId":"29","toLtaId":"56","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Bukit Gombak","toStationName":"Petir","distanceKm":6.5,"fromLtaId":"29","toLtaId":"55","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
-{"fromStationName":"Bukit Gombak","toStationName":"Phoenix","distanceKm":5.4,"fromLtaId":"29","toLtaId":"53","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Bukit Gombak","toStationName":"Pioneer","distanceKm":8.9,"fromLtaId":"29","toLtaId":"66","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Bukit Gombak","toStationName":"Potong Pasir","distanceKm":20.9,"fromLtaId":"29","toLtaId":"108","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Bukit Gombak","toStationName":"Prince Edward Road","distanceKm":19.3,"fromLtaId":"29","toLtaId":"233","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
@@ -5735,7 +5734,6 @@
 {"fromStationName":"Changi Airport","toStationName":"Havelock","distanceKm":22.5,"fromLtaId":"65","toLtaId":"416","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Changi Airport","toStationName":"Haw Par Villa","distanceKm":29,"fromLtaId":"65","toLtaId":"223","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Changi Airport","toStationName":"Hillview","distanceKm":30.5,"fromLtaId":"65","toLtaId":"308","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
-{"fromStationName":"Changi Airport","toStationName":"Holland Village","distanceKm":20.5,"fromLtaId":"65","toLtaId":"219","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Changi Airport","toStationName":"Hougang","distanceKm":20.5,"fromLtaId":"65","toLtaId":"104","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Changi Airport","toStationName":"Hume","distanceKm":29.6,"fromLtaId":"65","toLtaId":"336","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Changi Airport","toStationName":"Jalan Besar","distanceKm":18.6,"fromLtaId":"65","toLtaId":"320","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
@@ -11924,7 +11922,6 @@
 {"fromStationName":"Holland Village","toStationName":"Canberra","distanceKm":20.8,"fromLtaId":"219","toLtaId":"73","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Holland Village","toStationName":"Cantonment","distanceKm":10.9,"fromLtaId":"219","toLtaId":"232","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Holland Village","toStationName":"Cashew","distanceKm":11.2,"fromLtaId":"219","toLtaId":"307","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
-{"fromStationName":"Holland Village","toStationName":"Changi Airport","distanceKm":25.2,"fromLtaId":"219","toLtaId":"65","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Holland Village","toStationName":"Cheng Lim","distanceKm":18.1,"fromLtaId":"219","toLtaId":"122","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Holland Village","toStationName":"Chinatown","distanceKm":8.1,"fromLtaId":"219","toLtaId":"114","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Holland Village","toStationName":"Chinese Garden","distanceKm":9,"fromLtaId":"219","toLtaId":"25","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
@@ -12222,7 +12219,6 @@
 {"fromStationName":"Hougang","toStationName":"Siglap","distanceKm":23.9,"fromLtaId":"104","toLtaId":"429","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Hougang","toStationName":"Simei","distanceKm":16.5,"fromLtaId":"104","toLtaId":"40","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Hougang","toStationName":"Sixth Avenue","distanceKm":15,"fromLtaId":"104","toLtaId":"311","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
-{"fromStationName":"Hougang","toStationName":"Somerset","distanceKm":24.6,"fromLtaId":"104","toLtaId":"9","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Hougang","toStationName":"Soo Teck","distanceKm":5,"fromLtaId":"104","toLtaId":"143","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Hougang","toStationName":"South View","distanceKm":24.6,"fromLtaId":"104","toLtaId":"50","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Hougang","toStationName":"Springleaf","distanceKm":17.7,"fromLtaId":"104","toLtaId":"404","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
@@ -21982,7 +21978,6 @@
 {"fromStationName":"Phoenix","toStationName":"Buangkok","distanceKm":24.4,"fromLtaId":"53","toLtaId":"103","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Phoenix","toStationName":"Bugis","distanceKm":16,"fromLtaId":"53","toLtaId":"31","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Phoenix","toStationName":"Bukit Batok","distanceKm":6.5,"fromLtaId":"53","toLtaId":"28","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
-{"fromStationName":"Phoenix","toStationName":"Bukit Gombak","distanceKm":16.3,"fromLtaId":"53","toLtaId":"29","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Phoenix","toStationName":"Bukit Panjang","distanceKm":0.7,"fromLtaId":"53","toLtaId":"306","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Phoenix","toStationName":"Buona Vista","distanceKm":13.9,"fromLtaId":"53","toLtaId":"220","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Phoenix","toStationName":"Caldecott","distanceKm":14.4,"fromLtaId":"53","toLtaId":"216","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
@@ -24473,7 +24468,6 @@
 {"fromStationName":"Riviera","toStationName":"Rochor","distanceKm":16,"fromLtaId":"133","toLtaId":"317","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Riviera","toStationName":"Rumbia","distanceKm":5.7,"fromLtaId":"133","toLtaId":"118","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Riviera","toStationName":"Sam Kee","distanceKm":3.1,"fromLtaId":"133","toLtaId":"137","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
-{"fromStationName":"Riviera","toStationName":"Samudera","distanceKm":4.6,"fromLtaId":"133","toLtaId":"140","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Riviera","toStationName":"Segar","distanceKm":30.8,"fromLtaId":"133","toLtaId":"59","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Riviera","toStationName":"Sembawang","distanceKm":25.6,"fromLtaId":"133","toLtaId":"43","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Riviera","toStationName":"Sengkang","distanceKm":4.2,"fromLtaId":"133","toLtaId":"102","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
@@ -25202,7 +25196,6 @@
 {"fromStationName":"Samudera","toStationName":"Ranggung","distanceKm":4.8,"fromLtaId":"140","toLtaId":"121","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Samudera","toStationName":"Redhill","distanceKm":21.5,"fromLtaId":"140","toLtaId":"17","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Samudera","toStationName":"Renjong","distanceKm":4.7,"fromLtaId":"140","toLtaId":"129","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
-{"fromStationName":"Samudera","toStationName":"Riviera","distanceKm":4.7,"fromLtaId":"140","toLtaId":"133","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Samudera","toStationName":"Rochor","distanceKm":15.6,"fromLtaId":"140","toLtaId":"317","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Samudera","toStationName":"Rumbia","distanceKm":5.3,"fromLtaId":"140","toLtaId":"118","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Samudera","toStationName":"Sam Kee","distanceKm":1.5,"fromLtaId":"140","toLtaId":"137","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
@@ -26965,7 +26958,6 @@
 {"fromStationName":"Somerset","toStationName":"Haw Par Villa","distanceKm":11.1,"fromLtaId":"9","toLtaId":"223","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Somerset","toStationName":"Hillview","distanceKm":12.7,"fromLtaId":"9","toLtaId":"308","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Somerset","toStationName":"Holland Village","distanceKm":7.4,"fromLtaId":"9","toLtaId":"219","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
-{"fromStationName":"Somerset","toStationName":"Hougang","distanceKm":10.7,"fromLtaId":"9","toLtaId":"104","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Somerset","toStationName":"Hume","distanceKm":11.7,"fromLtaId":"9","toLtaId":"336","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Somerset","toStationName":"Jalan Besar","distanceKm":5.7,"fromLtaId":"9","toLtaId":"320","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Somerset","toStationName":"Jelapang","distanceKm":15.9,"fromLtaId":"9","toLtaId":"60","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
@@ -33670,3 +33662,11 @@
 {"fromStationName":"Yishun","toStationName":"Woodleigh","distanceKm":13.9,"fromLtaId":"22","toLtaId":"107","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Yishun","toStationName":"Yew Tee","distanceKm":14.6,"fromLtaId":"22","toLtaId":"48","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
 {"fromStationName":"Yishun","toStationName":"Yio Chu Kang","distanceKm":6.3,"fromLtaId":"22","toLtaId":"1","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
+{"fromStationName":"Bukit Gombak","toStationName":"Phoenix","distanceKm":5.4,"fromLtaId":"29","toLtaId":"53","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
+{"fromStationName":"Changi Airport","toStationName":"Holland Village","distanceKm":25.2,"fromLtaId":"65","toLtaId":"219","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
+{"fromStationName":"Holland Village","toStationName":"Changi Airport","distanceKm":25.2,"fromLtaId":"219","toLtaId":"65","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
+{"fromStationName":"Hougang","toStationName":"Somerset","distanceKm":10.7,"fromLtaId":"104","toLtaId":"9","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
+{"fromStationName":"Phoenix","toStationName":"Bukit Gombak","distanceKm":5.4,"fromLtaId":"53","toLtaId":"29","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
+{"fromStationName":"Riviera","toStationName":"Samudera","distanceKm":4.6,"fromLtaId":"133","toLtaId":"140","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
+{"fromStationName":"Samudera","toStationName":"Riviera","distanceKm":4.6,"fromLtaId":"140","toLtaId":"133","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}
+{"fromStationName":"Somerset","toStationName":"Hougang","distanceKm":10.7,"fromLtaId":"9","toLtaId":"104","mappingHash":"548fbcc74fc071ea3b03e521f76a41ebc2c61405394c59c25df6a4694e316ec1"}

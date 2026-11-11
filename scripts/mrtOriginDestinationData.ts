@@ -24,6 +24,13 @@ export interface MrtOriginDestinationDistance {
   distanceKm: number;
 }
 
+export interface AsymmetricDistancePair {
+  stationA: string;
+  stationB: string;
+  distanceAToBKm: number;
+  distanceBToAKm: number;
+}
+
 export function normalizeStationLabel(label: string): string {
   return label
     .replace(/\s*\([^)]*\)\s*$/, '')
@@ -177,6 +184,36 @@ export function buildOrderedOriginDestinationPairs(
     }
   }
   return pairs;
+}
+
+/**
+ * Finds station pairs whose A->B and B->A distances differ by any amount.
+ * Concurrent LTA requests have returned another pair's distance, so any asymmetry is treated as bad data.
+ * Each pair is reported once, ordered as stationA < stationB.
+ */
+export function findAsymmetricDistancePairs(
+  distances: MrtOriginDestinationDistance[],
+): AsymmetricDistancePair[] {
+  const distanceByPair = new Map<string, number>();
+  for (const row of distances) {
+    distanceByPair.set(`${row.fromStationName}\u0000${row.toStationName}`, row.distanceKm);
+  }
+
+  const asymmetricPairs: AsymmetricDistancePair[] = [];
+  for (const row of distances) {
+    if (row.fromStationName >= row.toStationName) continue;
+    const reverseKm = distanceByPair.get(`${row.toStationName}\u0000${row.fromStationName}`);
+    // Compare in hundredths of a kilometre, the unit LTA returns, to avoid floating-point noise.
+    if (reverseKm !== undefined && Math.round(reverseKm * 100) !== Math.round(row.distanceKm * 100)) {
+      asymmetricPairs.push({
+        stationA: row.fromStationName,
+        stationB: row.toStationName,
+        distanceAToBKm: row.distanceKm,
+        distanceBToAKm: reverseKm,
+      });
+    }
+  }
+  return asymmetricPairs;
 }
 
 export function parseLocalStationNames(stationSeedSql: string): string[] {

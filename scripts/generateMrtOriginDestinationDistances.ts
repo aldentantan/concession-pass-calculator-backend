@@ -4,6 +4,7 @@ import path from 'node:path';
 import { chromium, type Page } from 'playwright';
 import {
   buildOrderedOriginDestinationPairs,
+  findAsymmetricDistancePairs,
   generateMrtEdgesSql,
   mapLtaStationOptions,
   parseLtaDistanceKm,
@@ -200,6 +201,22 @@ async function main(): Promise<void> {
         distanceKm: record.distanceKm,
       };
     });
+
+    const asymmetricPairs = findAsymmetricDistancePairs(distances);
+    for (const pair of asymmetricPairs) {
+      await logError({
+        stage: 'distance_validation',
+        ...pair,
+        message: `${pair.stationA} -> ${pair.stationB} is ${pair.distanceAToBKm} km but ${pair.stationB} -> ${pair.stationA} is ${pair.distanceBToAKm} km`,
+      });
+    }
+    if (asymmetricPairs.length > 0) {
+      throw new Error(
+        `${asymmetricPairs.length} station pairs have different distances in each direction; see ${errorLogPath}. ` +
+        `Remove both directions of each pair from ${progressPath} and rerun with LTA_MRT_BATCH_SIZE=1. No SQL matrix was generated.`,
+      );
+    }
+
     await fs.writeFile(sqlOutputPath, generateMrtEdgesSql(distances), 'utf8');
     console.log(`Wrote ${distances.length} directed MRT distances to ${sqlOutputPath}`);
   } finally {
